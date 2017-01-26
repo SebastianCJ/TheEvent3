@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="185dp"
+        android:id="@+id/eventimg"
+        android:contentDescription="@string/imgevento"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/desclayout"
+        android:layout_below="@+id/eventimg"
+        android:background="@color/white">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:text="Amaya y Juan"
+            android:textSize="14sp"
+            android:textColor="@color/pink"
+            android:id="@+id/nombretxt"
+            android:layout_marginTop="15dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nombre del lugar"
+            android:textSize="13sp"
+            android:textColor="@color/silver"
+            android:id="@+id/lugartxt"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/nombretxt"
+            android:layout_alignLeft="@+id/nombretxt"
+            android:layout_alignStart="@+id/nombretxt" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elitsed do eiusmod tempor. "
+            android:textColor="@color/gray2"
+            android:layout_marginTop="5dp"
+            android:textSize="13sp"
+            android:id="@+id/descripciontxt"
+            android:layout_below="@+id/lugartxt"
+            android:layout_alignLeft="@+id/lugartxt"
+            android:layout_alignStart="@+id/lugartxt"
+            android:layout_marginBottom="15dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12/Marzo/2017"
+            android:textColor="@color/black"
+            android:id="@+id/fechatxt"
+            android:textSize="12sp"
+            android:layout_marginRight="15dp"
+            android:layout_above="@+id/lugartxt"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/desclayout"
+        android:background="@drawable/rounded_corner">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/seleccionar"
+            android:text="SELECCIONAR"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/white"
+            android:gravity="center"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

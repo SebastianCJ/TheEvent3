@@ -1,0 +1,113 @@
+{
+  "project_info": {
+    "project_number": "550259298520",
+    "firebase_url": "https://the-event-ce754.firebaseio.com",
+    "project_id": "the-event-ce754",
+    "storage_bucket": "the-event-ce754.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:550259298520:android:184b40b93497f6f0",
+        "android_client_info": {
+          "package_name": "com.example.gatsu.theevent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "550259298520-ufaac0f70sfctgnav1li2tgl30otuq0s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.gatsu.theevent",
+            "certificate_hash": "753EF505A282A053865D98EA47632333B31B8DC3"
+          }
+        },
+        {
+          "client_id": "550259298520-l6uba9uv6ponads9f73dkne30v8o7hhs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPPRvP-WQFTcbDp_00qzTBU6HQRPH2Uzo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "550259298520-i9svv5efk72fdbdg71uvgmcklr3i5pqt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "mx.distro.theevent"
+              }
+            },
+            {
+              "client_id": "550259298520-l6uba9uv6ponads9f73dkne30v8o7hhs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:550259298520:android:dda4f32e74930d7d",
+        "android_client_info": {
+          "package_name": "mx.com.theevent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "550259298520-8h1i0ihpqoqk2goqpbl3jjkj2a2sidjj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mx.com.theevent",
+            "certificate_hash": "753EF505A282A053865D98EA47632333B31B8DC3"
+          }
+        },
+        {
+          "client_id": "550259298520-l6uba9uv6ponads9f73dkne30v8o7hhs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPPRvP-WQFTcbDp_00qzTBU6HQRPH2Uzo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "550259298520-i9svv5efk72fdbdg71uvgmcklr3i5pqt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "mx.distro.theevent"
+              }
+            },
+            {
+              "client_id": "550259298520-l6uba9uv6ponads9f73dkne30v8o7hhs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/comentarioLayout">
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:id="@+id/separador"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/silver"/>
+    <com.mikhaellopez.circularimageview.CircularImageView
+        android:layout_width="50dp"
+        android:layout_height="60dp"
+        android:id="@+id/imgperfilComentario"
+        android:contentDescription="@string/imgevento"
+        app:civ_border="true"
+        app:civ_border_width="2dp"
+        app:civ_border_color="@color/white"
+        android:src="@mipmap/carb"
+        android:layout_marginLeft="15dp"
+        android:layout_below="@+id/separador"
+        android:layout_above="@id/desclayout" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/desclayoutComentario"
+        android:clipToPadding="false">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Juan Zepeda"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:id="@+id/nombrePerfilComentario"
+            android:layout_marginTop="35dp"
+            android:layout_marginLeft="80dp"
+            android:layout_marginStart="80dp"
+            android:layout_alignParentTop="true"
+             />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hace 1 dia"
+            android:textSize="13sp"
+            android:layout_marginTop="35dp"
+            android:textColor="@color/silver"
+            android:id="@+id/diatxtComentario"
+            android:layout_marginLeft="300dp"
+            android:layout_marginRight="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="5dp"
+            android:text="Que onda! Los esperamos para la boda!"
+            android:textColor="@color/gray2"
+            android:id="@+id/comentario"
+            android:textSize="12sp"
+            android:layout_below="@id/nombrePerfilComentario"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="10dp" />
+
+
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:id="@+id/vertblack"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_more_vert_black_48dp"
+        android:layout_marginTop="46dp"
+        android:layout_below="@+id/desclayoutComentario"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

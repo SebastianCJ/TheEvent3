@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/comentarioLayout">
+
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/desclayoutComentario"
+        android:clipToPadding="false">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
+            android:textSize="13sp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
+            android:textColor="@color/black"
+            android:id="@+id/nombrePerfilComentario"
+            android:layout_marginTop="25dp"
+            android:layout_alignParentTop="true"
+            />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/btncalendario"
+            android:layout_alignBottom="@+id/diaTxt"
+            android:layout_alignLeft="@+id/nombrePerfilComentario"
+            android:layout_alignStart="@+id/nombrePerfilComentario"
+            android:id="@+id/imageView2" />
+        <TextView
+            android:id="@+id/diaTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="12"
+            android:textSize="14sp"
+            android:layout_below="@id/nombrePerfilComentario"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="40dp"
+            android:textColor="@color/gray2" />
+
+        <TextView
+            android:id="@+id/mesTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_below="@id/nombrePerfilComentario"
+            android:layout_toRightOf="@+id/diaTxt"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:text="Marzo"
+            android:textColor="@color/gray2" />
+
+        <TextView
+            android:id="@+id/yearTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="2017"
+            android:layout_toRightOf="@+id/mesTxt"
+            android:layout_below="@id/nombrePerfilComentario"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:textSize="14sp"
+            android:textColor="@color/gray2"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/nombrePerfilComentario"
+            android:layout_toRightOf="@+id/yearTxt"
+            android:layout_marginTop="10dp"
+            android:id="@+id/reloj"
+            android:layout_marginLeft="35dp"
+            android:src="@mipmap/iconreloj"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="5dp"
+            android:text="2:00 pm"
+            android:textColor="@color/gray2"
+            android:id="@+id/horaTxt"
+            android:textSize="14sp"
+            android:layout_below="@id/nombrePerfilComentario"
+            android:layout_toRightOf="@+id/reloj"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ruta"
+            android:src="@mipmap/iconreloj"
+            android:layout_below="@+id/horaTxt"
+            android:layout_alignLeft="@+id/imageView2"
+            android:layout_alignStart="@+id/imageView2" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lugar del evento"
+            android:textColor="@color/gray2"
+            android:id="@+id/lugarTxt"
+            android:textSize="14sp"
+            android:layout_alignTop="@+id/ruta"
+            android:layout_alignLeft="@+id/diaTxt"
+            android:layout_alignStart="@+id/diaTxt" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/imgseparador"
+            android:layout_below="@id/ruta"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="15dp"/>
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:id="@+id/vertblack"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_more_vert_black_48dp"
+        android:layout_marginTop="46dp"
+        android:layout_below="@+id/desclayoutComentario"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

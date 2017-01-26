@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@mipmap/bgeventos"
+    tools:context="com.example.gatsu.theevent.Evento">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/encabezado">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/pink"
+            android:id="@+id/seleccionaEvento"
+            android:text="@string/selectEvento"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="55dp">
+        </TextView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/misEventos"
+            android:text="@string/misEventos"
+            android:textColor="@color/silver"
+            android:textSize="14sp"
+            android:layout_below="@+id/seleccionaEvento"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp">
+
+        </TextView>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:background="@color/silver"
+            android:layout_marginTop="50dp"
+            android:layout_below="@+id/seleccionaEvento" />
+    </RelativeLayout>
+
+    <ListView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/eventContainer"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/encabezado"
+        android:layout_marginBottom="100dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"/>
+    <ImageView
+        android:id="@+id/imgmsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:src="@mipmap/imgmensaje"
+        android:layout_below="@id/fotoEncabezado"
+        android:layout_centerVertical="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="100dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:id="@+id/eventosNull"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:text="No se encontraron Eventos Disponibles"
+        android:textSize="14sp"
+        android:textColor="@color/pink"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/imgmsg"
+        android:layout_centerVertical="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="15dp"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnagregarimg"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:background="@mipmap/btnagregarevento"
+        android:layout_above="@+id/agregartxt"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/agregartxt"
+        android:text="@string/agregarEvento"
+        android:textSize="13sp"
+        android:textColor="@color/silver2"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp">
+
+    </TextView>
+
+
+</RelativeLayout>
