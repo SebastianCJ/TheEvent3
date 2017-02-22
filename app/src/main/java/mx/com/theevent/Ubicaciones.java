@@ -22,8 +22,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,6 +34,8 @@ import org.json.JSONObject;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.util.ArrayList;
 
 
 public class Ubicaciones extends AppCompatActivity {
@@ -42,10 +47,21 @@ public class Ubicaciones extends AppCompatActivity {
     private String[] rangoprecio;
     private String[] direccion;
     private String[] idubicaciones;
+    private String[] latitudes;
+    private String[] longitudes;
+    private String[] categorias;
+    private String[] idcategorias;
+    private String[] subcategorias;
+    private String[] idsubcategorias;
+    private String[] imgPaths;
+    private String[] idcategoria;
     private String id;
+    Spinner dropdown;
+    Spinner dropdownSub;
     private String[] titulos;
+    CircularImageView fotoPerfil;
     JSONObject res;
-    final String[] data ={"Mis Eventos","Mi Información","Notificaciones","Cerrar Sesión",};
+    final String[] data ={"Mis Eventos","Mi Información","Información del Evento","Notificaciones","Cerrar Sesión",};
     ListView eventContainer;
 
     @Override
@@ -59,21 +75,19 @@ public class Ubicaciones extends AppCompatActivity {
 
         final ImageView btnDrawerTimeline = (ImageView) findViewById(R.id.btnmenuOpen);
         final ImageView btnDrawerTimelineClose = (ImageView) findViewById(R.id.btnmenuClose);
-        final CircularImageView fotoPerfil = (CircularImageView) findViewById(R.id.fotoEncabezado);
+        fotoPerfil = (CircularImageView) findViewById(R.id.fotoEncabezado);
         final ImageView iconTimeline = (ImageView) findViewById(R.id.btntimeline);
         final ImageView iconCalendario = (ImageView) findViewById(R.id.btncalendario);
         final ImageView iconPublicacion = (ImageView) findViewById(R.id.btncentro);
-        final ImageView iconRuta = (ImageView) findViewById(R.id.btnruta);
-
-        try {
-            Bitmap bitmap = BitmapFactory.decodeStream(this.openFileInput("myImage"));
-            fotoPerfil.setImageBitmap(bitmap);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
 
 
-        new AsyncUbicaciones().execute("ubicaciones");
+
+        datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
+        String remotePath = datosPersistentes.getString("fotoperfilThe3v3nt","");
+        Picasso.with(getApplicationContext()).load(remotePath).resize(50, 50).into(fotoPerfil);
+
+        new AsyncCategorias().execute("categorias");
+
 
         fotoPerfil.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -95,6 +109,7 @@ public class Ubicaciones extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(Ubicaciones.this, Camara.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                         dialog.dismiss();
                     }
@@ -104,6 +119,7 @@ public class Ubicaciones extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(Ubicaciones.this, Galeria.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                         dialog.dismiss();
                     }
@@ -117,6 +133,7 @@ public class Ubicaciones extends AppCompatActivity {
         iconTimeline.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(Ubicaciones.this, Timeline.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
 
             }
@@ -125,19 +142,13 @@ public class Ubicaciones extends AppCompatActivity {
         iconCalendario.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(Ubicaciones.this, Calendario.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
 
             }
         });
 
 
-        iconRuta.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(Ubicaciones.this, Ubicaciones.class);
-                startActivity(intent);
-
-            }
-        });
 
         iconPublicacion.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -180,18 +191,28 @@ public class Ubicaciones extends AppCompatActivity {
                 switch(pos){
                     case 1:
                         Intent Intent = new Intent(Ubicaciones.this, Evento.class);
+                        Intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(Intent);
                         break;
                     case 2:
                         Intent IntentInfo = new Intent(Ubicaciones.this, MiInformacion.class);
+                        IntentInfo.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(IntentInfo);
                         break;
+
                     case 3:
-                        Intent IntentNotificaciones = new Intent(Ubicaciones.this, Notificaciones.class);
-                        startActivity(IntentNotificaciones);
+                        Intent IntentInfoEvento = new Intent(Ubicaciones.this, InfoEvento.class);
+                        IntentInfoEvento.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(IntentInfoEvento);
                         break;
 
                     case 4:
+                        Intent IntentNotificaciones = new Intent(Ubicaciones.this, Notificaciones.class);
+                        IntentNotificaciones.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(IntentNotificaciones);
+                        break;
+
+                    case 5:
                         final Dialog dialog = new Dialog(Ubicaciones.this);
                         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                         dialog.setCancelable(false);
@@ -211,6 +232,7 @@ public class Ubicaciones extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 Intent cerrarSesion = new Intent(Ubicaciones.this, Login.class);
+                                cerrarSesion.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(cerrarSesion);
                             }
                         });
@@ -259,10 +281,73 @@ public class Ubicaciones extends AppCompatActivity {
             }
         });
 
+
+
     }
 
+    private JSONObject obtenerCategorias() {
+        datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
+        id = datosPersistentes.getString("idusrThe3v3nt","");
+        String idevento = datosPersistentes.getString("ideventoThe3v3nt", "");
+        JSONData conexion = new JSONData();
+        JSONObject respuesta = null;
+        try {
+            Log.d("UBICACIONES: ", "action=categorias&idevento=" + idevento);
+            respuesta = conexion.conexionServidor(serverUrl, "action=categorias&idevento=" + idevento);
+            if (respuesta.getString("success").equals("OK")) {
 
-    private JSONObject obtenerUbicaciones() {
+                JSONArray ubicaciones = respuesta.getJSONArray("categorias");
+                categorias = new String[ubicaciones.length()];
+                idcategorias = new String[ubicaciones.length()];
+                int i = 0;
+
+                while (i < ubicaciones.length()) {
+                    JSONObject ubicacion = ubicaciones.getJSONObject(i);
+                    categorias[i] = ubicacion.getString("nombre");
+                    idcategorias[i] = ubicacion.getString("idcategoria");
+                    i++;
+                }
+
+            }
+            return respuesta;
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        return respuesta;
+    }
+
+    private JSONObject obtenerSubCategorias(String idcategoria) {
+        datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
+        id = datosPersistentes.getString("idusrThe3v3nt","");
+        String idevento = datosPersistentes.getString("ideventoThe3v3nt", "");
+        JSONData conexion = new JSONData();
+        JSONObject respuesta = null;
+        try {
+            Log.d("UBICACIONES: ", "action=subcategorias&idevento=" + idevento + "&idcategoria=" + idcategoria);
+            respuesta = conexion.conexionServidor(serverUrl, "action=subcategorias&idevento=" + idevento + "&idcategoria=" + idcategoria);
+            if (respuesta.getString("success").equals("OK")) {
+
+                JSONArray ubicaciones = respuesta.getJSONArray("subcategorias");
+                subcategorias = new String[ubicaciones.length()];
+                idsubcategorias = new String[ubicaciones.length()];
+                int i = 0;
+
+                while (i < ubicaciones.length()) {
+                    JSONObject ubicacion = ubicaciones.getJSONObject(i);
+                    subcategorias[i] = ubicacion.getString("nombre");
+                    idsubcategorias[i] = ubicacion.getString("idsubcategoria");
+                    i++;
+                }
+
+            }
+            return respuesta;
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        return respuesta;
+    }
+
+    private JSONObject obtenerUbicaciones(String idcategoria) {
         datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
         id = datosPersistentes.getString("idusrThe3v3nt","");
         String idevento = datosPersistentes.getString("ideventoThe3v3nt", "");
@@ -270,8 +355,8 @@ public class Ubicaciones extends AppCompatActivity {
         JSONData conexion = new JSONData();
         JSONObject respuesta = null;
         try {
-            Log.d("UBICACIONES: ", "action=ubicaciones&idevento=" + idevento);
-            respuesta = conexion.conexionServidor(serverUrl, "action=ubicaciones&idevento=" + idevento);
+            Log.d("UBICACIONES: ", "action=ubicaciones&idevento=" + idevento + "&idcategoria=" + idcategoria);
+            respuesta = conexion.conexionServidor(serverUrl, "action=ubicaciones&idevento=" + idevento + "&idcategoria=" + idcategoria);
             if (respuesta.getString("success").equals("OK")) {
 
                 JSONArray ubicaciones = respuesta.getJSONArray("ubicaciones");
@@ -281,6 +366,9 @@ public class Ubicaciones extends AppCompatActivity {
                 direccion = new String[ubicaciones.length()];
                 idubicaciones = new String[ubicaciones.length()];
                 titulos = new String[ubicaciones.length()];
+                latitudes = new String[ubicaciones.length()];
+                longitudes = new String[ubicaciones.length()];
+                imgPaths = new String[ubicaciones.length()];
 
                 int i = 0;
 
@@ -292,6 +380,10 @@ public class Ubicaciones extends AppCompatActivity {
                     direccion[i] = ubicacion.getString("direccion");
                     titulos[i] = ubicacion.getString("titulo");
                     idubicaciones[i] = ubicacion.getString("idubicacion");
+                    latitudes[i] = ubicacion.getString("latitud");
+                    longitudes[i] = ubicacion.getString("longitud");
+                    String remotePath = "http://theevent.com.mx/imagenes/ubicaciones/" + idubicaciones[i] + ".jpg";
+                    imgPaths[i] = remotePath;
                     i++;
                 }
 
@@ -302,6 +394,7 @@ public class Ubicaciones extends AppCompatActivity {
         }
         return respuesta;
     }
+
 
     public class AsyncUbicaciones extends AsyncTask<String, String, String> {
 
@@ -334,13 +427,13 @@ public class Ubicaciones extends AppCompatActivity {
             try {
                 switch (params[0]) {
                     case "ubicaciones":
-                        res = obtenerUbicaciones();
+                        res = obtenerUbicaciones(params[1]);
                         return res.getString("success");
-                    case "eventimg":
-                        String remotePath = params[1];
-                        return "OK";
+                    case "subUbicaciones":
+                        res = obtenerUbicaciones(params[1]);
+                        return res.getString("success");
                     case "buscar":
-                        res = obtenerUbicaciones();
+                        res = obtenerUbicaciones(params[1]);
                         return res.getString("sucess");
                 }
 
@@ -367,7 +460,7 @@ public class Ubicaciones extends AppCompatActivity {
             super.onPostExecute(result);
             pDialog.dismiss();
             if (nombres != null && nombres.length > 0) {
-                AdapterUbicaciones adapter = new AdapterUbicaciones(Ubicaciones.this,nombres, descripciones, rangoprecio, direccion, titulos);
+                AdapterUbicaciones adapter = new AdapterUbicaciones(Ubicaciones.this,nombres, descripciones, rangoprecio, direccion, titulos, imgPaths, latitudes, longitudes,idubicaciones);
                 eventContainer.setAdapter(adapter);
             }
             else{
@@ -380,11 +473,155 @@ public class Ubicaciones extends AppCompatActivity {
     }
 
 
+    public class AsyncCategorias extends AsyncTask<String, String, String> {
+
+        public AsyncCategorias() {
+            //set context variables if required
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            eventContainer = (ListView) findViewById(R.id.eventContainerUbicaciones);
+            pDialog = new ProgressDialog(Ubicaciones.this);
+            // Set progressbar message
+            pDialog.setMessage("Cargando Ubicaciones...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(false);
+            // Show progressbar
+            pDialog.show();
+        }
+
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            //String urlString = params[0]; // URL to call
+
+            String resultToDisplay = "";
+
+            InputStream in = null;
+            try {
+                switch (params[0]) {
+                    case "categorias":
+                        res = obtenerCategorias();
+                        return res.getString("success");
+                }
+
+
+            } catch (Exception e) {
+
+                System.out.println(e.getMessage());
+
+                return e.getMessage();
+
+            }
+
+            try {
+                return res.getString("success");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return "Error";
+        }
+
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            pDialog.dismiss();
+            dropdown = (Spinner)findViewById(R.id.spinner);
+            dropdownSub = (Spinner)findViewById(R.id.spinnerSub);
+            final TextView noCats = (TextView) findViewById(R.id.ubicacionNullCat);
+            final ImageView msg = (ImageView) findViewById(R.id.imgmsg);
+            int hidingItemIndex = 0;
+            if (categorias != null && categorias.length > 0) {
+                SpinnerAdapter dataAdapterCategorias = new SpinnerAdapter(getApplicationContext(), R.layout.spinner_item, categorias, hidingItemIndex);
+                dataAdapterCategorias.setDropDownViewResource(R.layout.spinner_item);
+                dropdown.setAdapter(dataAdapterCategorias);
+
+                dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                        System.out.println(dropdown.getSelectedItem().toString());
+                        System.out.println(idcategorias[position]);
+                        if (!idcategorias[position].equals("0")) {
+                            noCats.setVisibility(View.GONE);
+                            msg.setVisibility(View.GONE);
+                            obtenerSubCategorias(idcategorias[position]);
+                            new AsyncUbicaciones().execute("ubicaciones", idcategorias[position]);
+                            SharedPreferences settings = getApplicationContext().getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editarDatosPersistentes = settings.edit();
+                            editarDatosPersistentes.putString("selectedUbicationThe3v3nt", idcategorias[position]);
+                            editarDatosPersistentes.apply();
+                        }
+                        else{
+                            String selectedUbication = datosPersistentes.getString("selectedUbicationThe3v3nt","");
+                            if (!selectedUbication.equals("")) {
+                                int myNum = Integer.parseInt(selectedUbication);
+                                dropdown.setSelection(myNum);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parentView) {
+                        // your code here
+                    }
+
+                });
+
+                if (subcategorias != null && subcategorias.length > 0) {
+
+                    SpinnerAdapter dataAdapterSubCategorias = new SpinnerAdapter(getApplicationContext(), R.layout.spinner_item, subcategorias, hidingItemIndex);
+                    dataAdapterSubCategorias.setDropDownViewResource(R.layout.spinner_item);
+                    dropdownSub.setAdapter(dataAdapterSubCategorias);
+                    dropdownSub.setVisibility(View.VISIBLE);
+
+                    dropdownSub.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                            System.out.println(dropdownSub.getSelectedItem().toString());
+                            System.out.println(idsubcategorias[position]);
+                            if (!idsubcategorias[position].equals("0")) {
+                                new AsyncUbicaciones().execute("subUbicaciones", idsubcategorias[position]);
+                                SharedPreferences settings = getApplicationContext().getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editarDatosPersistentes = settings.edit();
+                                editarDatosPersistentes.putString("selectedSubUbicationThe3v3nt", idsubcategorias[position]);
+                                editarDatosPersistentes.apply();
+                            }
+                            else{
+                                String selectedUbication = datosPersistentes.getString("selectedSubUbicationThe3v3nt","");
+                                if (!selectedUbication.equals("")) {
+                                    int myNum = Integer.parseInt(selectedUbication);
+                                    dropdownSub.setSelection(myNum);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parentView) {
+                            // your code here
+                        }
+
+                    });
+                }
+
+            }
+        }
+    }
+
     @Override
     public void onBackPressed(){
         Intent Intent = new Intent(Ubicaciones.this, Timeline.class);
+        Intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+        SharedPreferences settings = getApplicationContext().getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editarDatosPersistentes = settings.edit();
+        editarDatosPersistentes.putString("selectedUbicationThe3v3nt", "");
+        editarDatosPersistentes.apply();
         startActivity(Intent);
     }
+
 
 
 }

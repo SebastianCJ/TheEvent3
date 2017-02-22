@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/comentarioLayout"
+    android:background="@color/white">
+
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/desclayoutComentario"
+        android:clipToPadding="false">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Categoria 1"
+            android:visibility="visible"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:id="@+id/nombreTxt"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_alignParentTop="true" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="1dp"
+            android:textColor="@color/black21"
+            android:id="@+id/descripcionTxt"
+            android:layout_below="@+id/nombreTxt"
+            android:textSize="12sp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginBottom="10dp"
+            android:editable="false"
+            android:inputType="none"
+            android:textIsSelectable="true"
+            android:autoLink="web"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt" />
+
+
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:id="@+id/vertblack"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_more_vert_black_48dp"
+        android:layout_marginTop="46dp"
+        android:layout_below="@+id/desclayoutComentario"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

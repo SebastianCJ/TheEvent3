@@ -22,6 +22,10 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,7 +48,6 @@ public class AdapterTimeline extends ArrayAdapter<String> {
     private final String[] idposts;
     private String[] imagenesString;
     JSONObject res;
-    ArrayList<Bitmap> imagenes;
 
     static class ViewHolder {
         public TextView nombreTxt;
@@ -60,11 +63,10 @@ public class AdapterTimeline extends ArrayAdapter<String> {
         public TextView numlikes;
         public ImageView vertblack;
         public RelativeLayout timelinehead;
-        public LinearLayout comentariolayout;
-        public LinearLayout rutalayout;
         public ImageView imgperfil;
         public ImageView foto1;
         public ImageView foto2;
+
 
     }
 
@@ -147,17 +149,16 @@ public class AdapterTimeline extends ArrayAdapter<String> {
         return respuesta;
     }
 
-    public AdapterTimeline(Activity context, String[] nombres, String[] dias, String[] mensajes, ArrayList<Bitmap> imagenes,String[] comentarios,String[] likes,String[] idposts,String[] imagenesString) {
+    public AdapterTimeline(Activity context, String[] nombres, String[] dias, String[] mensajes, String[] imagenesString,String[] comentarios,String[] likes,String[] idposts) {
         super(context, R.layout.activity_timeline, nombres);
         this.context = context;
         this.nombres = nombres;
         this.dias = dias;
         this.mensajes = mensajes;
-        this.imagenes = imagenes;
+        this.imagenesString = imagenesString;
         this.comentarios = comentarios;
         this.likes = likes;
         this.idposts = idposts;
-        this.imagenesString = imagenesString;
     }
 
     @Override
@@ -214,12 +215,9 @@ public class AdapterTimeline extends ArrayAdapter<String> {
                 editarDatosPersistentes.putString("numlikesPost", likes[posicion]);
                 editarDatosPersistentes.putString("numcomentariosPost", comentarios[posicion]);
                 editarDatosPersistentes.putString("fechaPost", dias[posicion]);
-//                editarDatosPersistentes.putString("idpostThe3v3nt", idposts[posicion]);
-//                editarDatosPersistentes.putString("idpostThe3v3nt", idposts[posicion]);
-//                editarDatosPersistentes.putString("idpostThe3v3nt", idposts[posicion]);
-//                editarDatosPersistentes.putString("idpostThe3v3nt", idposts[posicion]);
                 editarDatosPersistentes.apply();
                 Intent intent = new Intent(context, Comentarios.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
         });
@@ -254,6 +252,7 @@ public class AdapterTimeline extends ArrayAdapter<String> {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, Comentarios.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);;
             }
         });
@@ -274,10 +273,30 @@ public class AdapterTimeline extends ArrayAdapter<String> {
         String mensaje = mensajes[position];
         String numComentarios = comentarios[position]+ " comentarios";
         String numLikes = "   +" + likes[position]+ "    ";
-        if (imagenes.size()>0) {
-            Bitmap imagen = imagenes.get(position);
-            Drawable dr = new BitmapDrawable(imagen);
-            holder.image.setBackgroundDrawable(dr);
+        if (imagenesString.length>0) {
+
+            Picasso.with(context).load(imagenesString[position]).into(new Target() {
+
+                @Override
+                public void onPrepareLoad(Drawable arg0) {
+                    // TODO Auto-generated method stub
+                    // Set progressbar message
+
+                }
+
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom arg1) {
+                    // TODO Auto-generated method stub
+                    holder.image.setBackgroundDrawable(new BitmapDrawable(context.getResources(), bitmap));
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable arg0) {
+                    // TODO Auto-generated method stub
+
+                }
+            });
+
         }
         holder.nombreTxt.setText(nombre);
         holder.diaTxt.setText(dia);

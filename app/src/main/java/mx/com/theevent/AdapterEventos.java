@@ -12,6 +12,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 
@@ -21,7 +23,7 @@ public class AdapterEventos extends ArrayAdapter<String> {
     private final String[] lugares;
     private final String[] descripciones;
     private final String[] fechas;
-    ArrayList<Bitmap> imagenes;
+    private final String[] imagenes;
 
     static class ViewHolder {
         public TextView nombreTxt;
@@ -32,7 +34,7 @@ public class AdapterEventos extends ArrayAdapter<String> {
         public ImageView image;
     }
 
-    public AdapterEventos(Activity context, String[] nombres, String[] lugares, String[] descripciones, String[] fechas, ArrayList<Bitmap> imagenes) {
+    public AdapterEventos(Activity context, String[] nombres, String[] lugares, String[] descripciones, String[] fechas, String[]imagenes) {
         super(context, R.layout.eventos_layout, nombres);
         this.context = context;
         this.nombres = nombres;
@@ -63,8 +65,7 @@ public class AdapterEventos extends ArrayAdapter<String> {
             viewHolder.fechaTxt.setTypeface(CustomFontsLoader.getTypeface(context,CustomFontsLoader.Bold));
             viewHolder.seleccionarTxt.setTypeface(CustomFontsLoader.getTypeface(context,CustomFontsLoader.Bold));
 
-            viewHolder.image = (ImageView) rowView
-                    .findViewById(R.id.eventimg);
+            viewHolder.image = (ImageView) rowView.findViewById(R.id.eventimg);
             rowView.setTag(viewHolder);
         }
 
@@ -74,9 +75,9 @@ public class AdapterEventos extends ArrayAdapter<String> {
         String lugar = lugares[position];
         String descripcion = descripciones[position];
         String fecha = fechas[position];
-        if (imagenes.size()>0) {
-            Bitmap imagen = imagenes.get(position);
-            holder.image.setImageBitmap(imagen);
+        if (imagenes.length >0) {
+            String imagen = imagenes[position];
+            Picasso.with(context).load(imagen).into(holder.image);
         }
         holder.nombreTxt.setText(nombre);
         holder.lugarTxt.setText(lugar);

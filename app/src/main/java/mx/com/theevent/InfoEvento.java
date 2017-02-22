@@ -35,28 +35,21 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
-public class Calendario extends AppCompatActivity {
+public class InfoEvento extends AppCompatActivity {
     private String serverUrl = "http://theevent.com.mx/webservices/th33v3nt.php";
     public SharedPreferences datosPersistentes;
     ProgressDialog pDialog;
-    private String[] descripcion;
-    private String[] dias;
-    private String[] meses;
-    private String[] horas;
-    private String[] idcalendarios;
-    private String[] years;
-    private String[] lugares;
-    private String[] latitudes;
-    private String[] longitudes;
-    private String id;
+    private String[] nombres;
+    private String[] descripciones;
     JSONObject res;
+    private String id;
     final String[] data ={"Mis Eventos","Mi Información","Información del Evento","Notificaciones","Cerrar Sesión",};
     ListView eventContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calendario);
+        setContentView(R.layout.activity_info_evento);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -69,30 +62,17 @@ public class Calendario extends AppCompatActivity {
         final ImageView iconCalendario = (ImageView) findViewById(R.id.btncalendario);
         final ImageView iconPublicacion = (ImageView) findViewById(R.id.btncentro);
         final ImageView iconRuta = (ImageView) findViewById(R.id.btnruta);
-//
-//        try {
-//            final BitmapFactory.Options options = new BitmapFactory.Options();
-//            options.inJustDecodeBounds = true;
-//            options.inSampleSize = calculateInSampleSize(options, 25, 25);
-//
-//            // Decode bitmap with inSampleSize set
-//            options.inJustDecodeBounds = false;
-//            Bitmap bitmap = BitmapFactory.decodeStream(this.openFileInput("myImage"),null,options);
-//
-//            fotoPerfil.setImageBitmap(bitmap);
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
 
         datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
         String remotePath = datosPersistentes.getString("fotoperfilThe3v3nt","");
         Picasso.with(getApplicationContext()).load(remotePath).resize(50, 50).into(fotoPerfil);
 
-        new AsyncCalendario().execute("calendario");
+
+        new AsyncUbicaciones().execute("info");
 
         fotoPerfil.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                final Dialog dialog = new Dialog(Calendario.this);
+                final Dialog dialog = new Dialog(InfoEvento.this);
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialog.setContentView(R.layout.dialog_layout);
 
@@ -109,7 +89,7 @@ public class Calendario extends AppCompatActivity {
                 primerboton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Calendario.this, Camara.class);
+                        Intent intent = new Intent(InfoEvento.this, Camara.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                         dialog.dismiss();
@@ -119,7 +99,7 @@ public class Calendario extends AppCompatActivity {
                 segundoboton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Calendario.this, Galeria.class);
+                        Intent intent = new Intent(InfoEvento.this, Galeria.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                         dialog.dismiss();
@@ -133,7 +113,16 @@ public class Calendario extends AppCompatActivity {
 
         iconTimeline.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(Calendario.this, Timeline.class);
+                Intent intent = new Intent(InfoEvento.this, Timeline.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+
+            }
+        });
+
+        iconCalendario.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(InfoEvento.this, Calendario.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
 
@@ -143,7 +132,7 @@ public class Calendario extends AppCompatActivity {
 
         iconRuta.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(Calendario.this, Ubicaciones.class);
+                Intent intent = new Intent(InfoEvento.this, Ubicaciones.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
 
@@ -152,7 +141,7 @@ public class Calendario extends AppCompatActivity {
 
         iconPublicacion.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                final Dialog dialog = new Dialog(Calendario.this);
+                final Dialog dialog = new Dialog(InfoEvento.this);
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialog.setCancelable(false);
                 dialog.setContentView(R.layout.dialog_layout);
@@ -190,26 +179,26 @@ public class Calendario extends AppCompatActivity {
                 });
                 switch(pos){
                     case 1:
-                        Intent Intent = new Intent(Calendario.this, Evento.class);
+                        Intent Intent = new Intent(InfoEvento.this, Evento.class);
                         startActivity(Intent);
                         break;
                     case 2:
-                        Intent IntentInfo = new Intent(Calendario.this, MiInformacion.class);
+                        Intent IntentInfo = new Intent(InfoEvento.this, MiInformacion.class);
                         startActivity(IntentInfo);
                         break;
 
                     case 3:
-                        Intent IntentInfoEvento = new Intent(Calendario.this, InfoEvento.class);
+                        Intent IntentInfoEvento = new Intent(InfoEvento.this, InfoEvento.class);
                         startActivity(IntentInfoEvento);
                         break;
 
                     case 4:
-                        Intent IntentNotificaciones = new Intent(Calendario.this, Notificaciones.class);
+                        Intent IntentNotificaciones = new Intent(InfoEvento.this, Notificaciones.class);
                         startActivity(IntentNotificaciones);
                         break;
 
                     case 5:
-                        final Dialog dialog = new Dialog(Calendario.this);
+                        final Dialog dialog = new Dialog(InfoEvento.this);
                         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                         dialog.setCancelable(false);
                         dialog.setContentView(R.layout.dialog_layout);
@@ -227,7 +216,7 @@ public class Calendario extends AppCompatActivity {
                         primerboton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Intent cerrarSesion = new Intent(Calendario.this, Login.class);
+                                Intent cerrarSesion = new Intent(InfoEvento.this, Login.class);
                                 startActivity(cerrarSesion);
                             }
                         });
@@ -278,7 +267,8 @@ public class Calendario extends AppCompatActivity {
 
     }
 
-    private JSONObject obtenerCalendario() {
+
+    private JSONObject obtenerInfo() {
         datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
         id = datosPersistentes.getString("idusrThe3v3nt","");
         String idevento = datosPersistentes.getString("ideventoThe3v3nt", "");
@@ -286,35 +276,19 @@ public class Calendario extends AppCompatActivity {
         JSONData conexion = new JSONData();
         JSONObject respuesta = null;
         try {
-
-            respuesta = conexion.conexionServidor(serverUrl, "action=calendario&idevento=" + idevento);
-
+            Log.d("INFOEVENTO: ", "action=infoevento&idevento=" + idevento);
+            respuesta = conexion.conexionServidor(serverUrl, "action=infoevento&idevento=" + idevento);
             if (respuesta.getString("success").equals("OK")) {
 
-                JSONArray calendarios = respuesta.getJSONArray("calendarios");
-                descripcion = new String[calendarios.length()];
-                dias = new String[calendarios.length()];
-                meses = new String[calendarios.length()];
-                horas = new String[calendarios.length()];
-                idcalendarios = new String[calendarios.length()];
-                years = new String[calendarios.length()];
-                lugares = new String[calendarios.length()];
-                latitudes = new String[calendarios.length()];
-                longitudes = new String[calendarios.length()];
-
+                JSONArray informaciones = respuesta.getJSONArray("informaciones");
+                nombres = new String[informaciones.length()];
+                descripciones = new String[informaciones.length()];
                 int i = 0;
 
-                while (i < calendarios.length()) {
-                    JSONObject calendario = calendarios.getJSONObject(i);
-                    descripcion[i] = calendario.getString("descripcion");
-                    dias[i] = calendario.getString("dia");
-                    meses[i] = calendario.getString("mes");
-                    horas[i] = calendario.getString("hora");
-                    idcalendarios[i] = calendario.getString("idcalendario");
-                    years[i] = calendario.getString("year");
-                    lugares[i] = calendario.getString("lugar");
-                    latitudes[i] = calendario.getString("latitud");
-                    longitudes[i] = calendario.getString("longitud");
+                while (i < informaciones.length()) {
+                    JSONObject info = informaciones.getJSONObject(i);
+                    nombres[i] = info.getString("nombre");
+                    descripciones[i] = info.getString("descripcion");
                     i++;
                 }
 
@@ -326,19 +300,19 @@ public class Calendario extends AppCompatActivity {
         return respuesta;
     }
 
-    public class AsyncCalendario extends AsyncTask<String, String, String> {
+    public class AsyncUbicaciones extends AsyncTask<String, String, String> {
 
-        public AsyncCalendario() {
+        public AsyncUbicaciones() {
             //set context variables if required
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            eventContainer = (ListView) findViewById(R.id.eventContainerCalendario);
-            pDialog = new ProgressDialog(Calendario.this);
+            eventContainer = (ListView) findViewById(R.id.eventContainerInfoEvento);
+            pDialog = new ProgressDialog(InfoEvento.this);
             // Set progressbar message
-            pDialog.setMessage("Cargando Actividades...");
+            pDialog.setMessage("Cargando Información del Evento...");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(false);
             // Show progressbar
@@ -356,15 +330,9 @@ public class Calendario extends AppCompatActivity {
             InputStream in = null;
             try {
                 switch (params[0]) {
-                    case "calendario":
-                        res = obtenerCalendario();
+                    case "info":
+                        res = obtenerInfo();
                         return res.getString("success");
-                    case "eventimg":
-                        String remotePath = params[1];
-                        return "OK";
-                    case "buscar":
-                        res = obtenerCalendario();
-                        return res.getString("sucess");
                 }
 
 
@@ -389,25 +357,26 @@ public class Calendario extends AppCompatActivity {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             pDialog.dismiss();
-            if (descripcion != null && descripcion.length > 0) {
-                AdapterCalendario adapter = new AdapterCalendario(Calendario.this,descripcion, dias, meses, horas,years, lugares, latitudes, longitudes);
+            if (nombres != null && nombres.length > 0) {
+                AdapterInfoEvento adapter = new AdapterInfoEvento(InfoEvento.this,nombres, descripciones);
                 eventContainer.setAdapter(adapter);
             }
             else{
-                final TextView calendarioNull = (TextView) findViewById(R.id.calendarioNull);
+                final TextView ubicacionNull = (TextView) findViewById(R.id.ubicacionNull);
                 final ImageView img = (ImageView) findViewById(R.id.imgmsg);
                 img.setVisibility(View.VISIBLE);
-                calendarioNull.setVisibility(View.VISIBLE);
-
+                ubicacionNull.setVisibility(View.VISIBLE);
             }
         }
     }
 
+
     @Override
     public void onBackPressed(){
-        Intent Intent = new Intent(Calendario.this, Timeline.class);
-        Intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+        Intent Intent = new Intent(InfoEvento.this, Timeline.class);
         startActivity(Intent);
     }
+
+
 }
 

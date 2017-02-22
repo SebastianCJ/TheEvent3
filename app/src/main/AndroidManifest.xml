@@ -117,7 +117,9 @@
         <activity
             android:name=".Notificaciones"
             android:label="@string/title_activity_notificaciones"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity android:name=".InfoEvento" />
+        <activity android:name=".Ubicacion"></activity>
     </application>
 
 </manifest>

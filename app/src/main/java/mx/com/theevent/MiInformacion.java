@@ -19,6 +19,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,6 +32,7 @@ import java.io.InputStream;
 public class MiInformacion extends AppCompatActivity {
 
     private String serverUrl = "http://theevent.com.mx/webservices/th33v3nt.php";
+    public SharedPreferences datosPersistentes;
     private EditText nombre;
     private EditText contrasena;
     private EditText correo;
@@ -60,7 +63,7 @@ public class MiInformacion extends AppCompatActivity {
 
         fotoPerfil.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                final Dialog dialog = new Dialog(getApplicationContext());
+                final Dialog dialog = new Dialog(MiInformacion.this);
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialog.setContentView(R.layout.dialog_layout);
 
@@ -78,6 +81,7 @@ public class MiInformacion extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(MiInformacion.this, Camara.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                         dialog.dismiss();
                     }
@@ -87,6 +91,7 @@ public class MiInformacion extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(MiInformacion.this, Galeria.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                         dialog.dismiss();
                     }
@@ -97,12 +102,24 @@ public class MiInformacion extends AppCompatActivity {
             }
         });
 
-        try {
-            Bitmap bitmap = BitmapFactory.decodeStream(this.openFileInput("myImage"));
-            fotoPerfil.setImageBitmap(bitmap);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            final BitmapFactory.Options options = new BitmapFactory.Options();
+//            options.inJustDecodeBounds = true;
+//            options.inSampleSize = calculateInSampleSize(options, 50, 50);
+//
+//            // Decode bitmap with inSampleSize set
+//            options.inJustDecodeBounds = false;
+//            Bitmap bitmap = BitmapFactory.decodeStream(this.openFileInput("myImage"),null,options);
+//
+//            fotoPerfil.setImageBitmap(bitmap);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+
+        datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
+        String remotePath = datosPersistentes.getString("fotoperfilThe3v3nt","");
+        Picasso.with(getApplicationContext()).load(remotePath).resize(50, 50).into(fotoPerfil);
+
 
         Button btonCancelar = (Button) findViewById(R.id.cancelar);
 
@@ -134,6 +151,29 @@ public class MiInformacion extends AppCompatActivity {
 
         });
 
+    }
+
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
     }
 
     private JSONObject guardarDatos(){
@@ -211,5 +251,10 @@ public class MiInformacion extends AppCompatActivity {
                 }
         }
     }
-
+    @Override
+    public void onBackPressed(){
+        Intent Intent = new Intent(MiInformacion.this, Timeline.class);
+        Intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(Intent);
+    }
 }

@@ -37,7 +37,7 @@ public class Evento extends AppCompatActivity {
     private String[] ideventos;
     JSONObject res;
     ListView eventContainer;
-    ArrayList<Bitmap> imagenes = new ArrayList<>();
+    private String[] imgPaths;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +61,7 @@ public class Evento extends AppCompatActivity {
                 editarDatosPersistentes.putString("ideventoThe3v3nt", ideventos[position]);
                 editarDatosPersistentes.apply();
                 Intent intent = new Intent(Evento.this, Timeline.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
 
@@ -74,50 +75,6 @@ public class Evento extends AppCompatActivity {
 //            }
 //
 //        });
-    }
-
-    public static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) >= reqHeight
-                    && (halfWidth / inSampleSize) >= reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-
-        return inSampleSize;
-    }
-
-    public Bitmap getBitmapFromURL(String src) {
-        try {
-            java.net.URL url = new java.net.URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url
-                    .openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            InputStream input = connection.getInputStream();
-            options.inSampleSize = calculateInSampleSize(options, 50, 50);
-
-            // Decode bitmap with inSampleSize set
-            options.inJustDecodeBounds = false;
-            return BitmapFactory.decodeStream(input,null,options);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     private JSONObject obtenerEventos() {
@@ -137,7 +94,7 @@ public class Evento extends AppCompatActivity {
                 descripciones = new String[eventos.length()];
                 fechas = new String[eventos.length()];
                 ideventos = new String[eventos.length()];
-                imagenes.clear();
+                imgPaths = new String[eventos.length()];
 
                 int i = 0;
 
@@ -149,8 +106,8 @@ public class Evento extends AppCompatActivity {
                     fechas[i] = evento.getString("fecha");
                     ideventos[i] = evento.getString("idevento");
                     String remotePath = "http://theevent.com.mx/imagenes/eventos/" + evento.getString("imagen");
-                    Bitmap myBitMap = getBitmapFromURL(remotePath);
-                    imagenes.add(myBitMap);
+                    imgPaths[i] = remotePath;
+
                     i++;
                 }
 
@@ -223,7 +180,7 @@ public class Evento extends AppCompatActivity {
             pDialog.dismiss();
 
             if (nombres != null && nombres.length > 0) {
-                AdapterEventos adapter = new AdapterEventos(Evento.this, nombres, lugares, descripciones, fechas, imagenes);
+                AdapterEventos adapter = new AdapterEventos(Evento.this, nombres, lugares, descripciones, fechas, imgPaths);
                 eventContainer.setAdapter(adapter);
             }
             else{
@@ -236,9 +193,12 @@ public class Evento extends AppCompatActivity {
         }
     }
 
+
+
     @Override
     public void onBackPressed(){
         Intent Intent = new Intent(getApplicationContext(), Login.class);
+        Intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(Intent);
     }
 

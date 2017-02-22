@@ -24,6 +24,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,7 +47,7 @@ public class Notificaciones extends AppCompatActivity {
     private String id;
     private String[] titulos;
     JSONObject res;
-    final String[] data ={"Mis Eventos","Mi Informacion","Notificaciones","Cerrar Sesion",};
+    final String[] data ={"Mis Eventos","Mi Información","Información del Evento","Notificaciones","Cerrar Sesión",};
     ListView eventContainer;
 
     @Override
@@ -63,13 +65,25 @@ public class Notificaciones extends AppCompatActivity {
         final ImageView iconTimeline = (ImageView) findViewById(R.id.btntimeline);
         final ImageView iconCalendario = (ImageView) findViewById(R.id.btncalendario);
         final ImageView iconPublicacion = (ImageView) findViewById(R.id.btncentro);
+        final ImageView iconRuta = (ImageView) findViewById(R.id.btnruta);
 
-        try {
-            Bitmap bitmap = BitmapFactory.decodeStream(this.openFileInput("myImage"));
-            fotoPerfil.setImageBitmap(bitmap);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            final BitmapFactory.Options options = new BitmapFactory.Options();
+//            options.inJustDecodeBounds = true;
+//            options.inSampleSize = calculateInSampleSize(options, 50, 50);
+//
+//            // Decode bitmap with inSampleSize set
+//            options.inJustDecodeBounds = false;
+//            Bitmap bitmap = BitmapFactory.decodeStream(this.openFileInput("myImage"),null,options);
+//
+//            fotoPerfil.setImageBitmap(bitmap);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+
+        datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
+        String remotePath = datosPersistentes.getString("fotoperfilThe3v3nt","");
+        Picasso.with(getApplicationContext()).load(remotePath).resize(50, 50).into(fotoPerfil);
 
 
        // new AsyncUbicaciones().execute("ubicaciones");
@@ -98,6 +112,7 @@ public class Notificaciones extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(Notificaciones.this, Camara.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                         dialog.dismiss();
                     }
@@ -107,6 +122,7 @@ public class Notificaciones extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(Notificaciones.this, Galeria.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                         dialog.dismiss();
                     }
@@ -120,6 +136,7 @@ public class Notificaciones extends AppCompatActivity {
         iconTimeline.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(Notificaciones.this, Timeline.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
 
             }
@@ -128,7 +145,18 @@ public class Notificaciones extends AppCompatActivity {
         iconCalendario.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(Notificaciones.this, Calendario.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+
+            }
+        });
+
+        iconRuta.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(Notificaciones.this, Ubicaciones.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+
 
             }
         });
@@ -180,12 +208,18 @@ public class Notificaciones extends AppCompatActivity {
                         Intent IntentInfo = new Intent(Notificaciones.this, MiInformacion.class);
                         startActivity(IntentInfo);
                         break;
+
                     case 3:
+                        Intent IntentInfoEvento = new Intent(Notificaciones.this, InfoEvento.class);
+                        startActivity(IntentInfoEvento);
+                        break;
+
+                    case 4:
                         Intent IntentNotificaciones = new Intent(Notificaciones.this, Notificaciones.class);
                         startActivity(IntentNotificaciones);
                         break;
 
-                    case 4:
+                    case 5:
                         final Dialog dialog = new Dialog(Notificaciones.this);
                         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                         dialog.setCancelable(false);
@@ -256,6 +290,28 @@ public class Notificaciones extends AppCompatActivity {
 
     }
 
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
 
     private JSONObject obtenerUbicaciones() {
         datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
@@ -362,16 +418,16 @@ public class Notificaciones extends AppCompatActivity {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             pDialog.dismiss();
-            if (nombres != null && nombres.length > 0) {
-                AdapterUbicaciones adapter = new AdapterUbicaciones(Notificaciones.this,nombres, descripciones, rangoprecio, direccion, titulos);
-                eventContainer.setAdapter(adapter);
-            }
-            else{
-                final TextView ubicacionNull = (TextView) findViewById(R.id.ubicacionNull);
-                final ImageView img = (ImageView) findViewById(R.id.imgmsg2);
-                img.setVisibility(View.VISIBLE);
-                ubicacionNull.setVisibility(View.VISIBLE);
-            }
+//            if (nombres != null && nombres.length > 0) {
+//                AdapterUbicaciones adapter = new AdapterUbicaciones(Notificaciones.this,nombres, descripciones, rangoprecio, direccion, titulos);
+//                eventContainer.setAdapter(adapter);
+//            }
+//            else{
+//                final TextView ubicacionNull = (TextView) findViewById(R.id.ubicacionNull);
+//                final ImageView img = (ImageView) findViewById(R.id.imgmsg2);
+//                img.setVisibility(View.VISIBLE);
+//                ubicacionNull.setVisibility(View.VISIBLE);
+//            }
         }
     }
 
@@ -379,6 +435,7 @@ public class Notificaciones extends AppCompatActivity {
     @Override
     public void onBackPressed(){
         Intent Intent = new Intent(Notificaciones.this, Timeline.class);
+        Intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(Intent);
     }
 

@@ -90,6 +90,7 @@ public class Login extends AppCompatActivity  {
             @Override
             public void onClick(View v) {
                 Intent Intent = new Intent(getApplicationContext(), Registro.class);
+                Intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(Intent);
             }
         });
@@ -108,8 +109,10 @@ public class Login extends AppCompatActivity  {
                     Toast.makeText(Login.this, "La longitud debe ser mayor a 1.", Toast.LENGTH_LONG).show();
                 }
 
-                //autentificacion con el servidor remoto
-                new AsyncLogin().execute("login");
+                if (enteredUsername.length() > 1 && enteredPassword.length() > 1) {
+                    //autentificacion con el servidor remoto
+                    new AsyncLogin().execute("login");
+                }
             }
         });
 
@@ -315,8 +318,8 @@ public class Login extends AppCompatActivity  {
                 else{
                     remotePath = "http://theevent.com.mx/imagenes/usuarios/" + respuesta.getString("imagen");
                 }
-                Bitmap myBitMap = getBitmapFromURL(remotePath);
-                createImageFromBitmap(myBitMap);
+                //Bitmap myBitMap = getBitmapFromURL(remotePath);
+                //createImageFromBitmap(myBitMap);
                 SharedPreferences.Editor editarDatosPersistentes = datosPersistentes.edit();
                 editarDatosPersistentes.putString("usrThe3v3nt", enteredUsername);
                 editarDatosPersistentes.putString("passThe3v3nt", enteredPassword);
@@ -326,6 +329,7 @@ public class Login extends AppCompatActivity  {
                 editarDatosPersistentes.putString("amaternoThe3v3nt",respuesta.getString("amaterno"));
                 editarDatosPersistentes.putString("telefonoThe3v3nt", respuesta.getString("telefono"));
                 editarDatosPersistentes.putString("correoThe3v3nt",respuesta.getString("correo"));
+                editarDatosPersistentes.putString("fotoperfilThe3v3nt",remotePath);
                 editarDatosPersistentes.apply();
 
             }
@@ -347,13 +351,13 @@ public class Login extends AppCompatActivity  {
                 String remotePath;
                 //se guardan los datos de manera persistente.
                 if (respuesta.getString("imagen").equals("vacio")) {
-                    remotePath = "http://theevent.com.mx/imagenes/usuarios/default";
+                    remotePath = "http://theevent.com.mx/imagenes/usuarios/default.png";
                 }
                 else{
                     remotePath = "http://theevent.com.mx/imagenes/usuarios/" + respuesta.getString("imagen");
                 }
-                Bitmap myBitMap = getBitmapFromURL(remotePath);
-                createImageFromBitmap(myBitMap);
+                //Bitmap myBitMap = getBitmapFromURL(remotePath);
+                //createImageFromBitmap(myBitMap);
                 SharedPreferences.Editor editarDatosPersistentes = datosPersistentes.edit();
                 editarDatosPersistentes.putString("idusrThe3v3nt", respuesta.getString("idfb"));
                 editarDatosPersistentes.putString("nombreThe3v3nt",respuesta.getString("nombre"));
@@ -361,6 +365,7 @@ public class Login extends AppCompatActivity  {
                 editarDatosPersistentes.putString("amaternoThe3v3nt",respuesta.getString("amaterno"));
                 editarDatosPersistentes.putString("telefonoThe3v3nt", respuesta.getString("telefono"));
                 editarDatosPersistentes.putString("correoThe3v3nt",respuesta.getString("correo"));
+                editarDatosPersistentes.putString("fotoperfilThe3v3nt",remotePath);
                 editarDatosPersistentes.apply();
 
             }
@@ -381,13 +386,13 @@ public class Login extends AppCompatActivity  {
                 String remotePath;
                 //se guardan los datos de manera persistente.
                 if (respuesta.getString("imagen").equals("vacio")) {
-                    remotePath = "http://theevent.com.mx/imagenes/usuarios/default";
+                    remotePath = "http://theevent.com.mx/imagenes/usuarios/default.png";
                 }
                 else{
                     remotePath = "http://theevent.com.mx/imagenes/usuarios/" + respuesta.getString("imagen");
                 }
-                Bitmap myBitMap = getBitmapFromURL(remotePath);
-                createImageFromBitmap(myBitMap);
+               // Bitmap myBitMap = getBitmapFromURL(remotePath);
+                //createImageFromBitmap(myBitMap);
                 SharedPreferences.Editor editarDatosPersistentes = datosPersistentes.edit();
                 editarDatosPersistentes.putString("usrThe3v3nt", UserName);
                 editarDatosPersistentes.putString("idusrThe3v3nt", respuesta.getString("id"));
@@ -396,6 +401,7 @@ public class Login extends AppCompatActivity  {
                 editarDatosPersistentes.putString("amaternoThe3v3nt",respuesta.getString("amaterno"));
                 editarDatosPersistentes.putString("telefonoThe3v3nt", respuesta.getString("telefono"));
                 editarDatosPersistentes.putString("correoThe3v3nt",respuesta.getString("correo"));
+                editarDatosPersistentes.putString("fotoperfilThe3v3nt",remotePath);
                 editarDatosPersistentes.apply();
             }
         } catch (IOException | JSONException e) {
@@ -481,6 +487,7 @@ public class Login extends AppCompatActivity  {
             super.onPostExecute(result);
             if (result.equals("OK")) {
                 Intent intent = new Intent(Login.this, Evento.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
             else{

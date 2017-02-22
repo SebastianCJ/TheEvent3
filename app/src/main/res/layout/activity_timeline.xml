@@ -45,27 +45,6 @@
                 android:textSize="22sp">
             </Button>
 
-            <ImageView
-                android:id="@+id/buscarTimeline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:background="@mipmap/btnbuscar"
-                android:layout_marginTop="10dp"
-                android:layout_alignParentRight="true" />
-            <EditText
-                android:id="@+id/buscarTxt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:hint="Buscar..."
-                android:textColor="@color/pink"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:visibility="gone"
-                android:layout_toRightOf="@+id/fotoEncabezado"
-                android:layout_toEndOf="@id/fotoEncabezado" />
             <com.mikhaellopez.circularimageview.CircularImageView
                 android:layout_width="40dp"
                 android:layout_height="60dp"
@@ -91,9 +70,9 @@
                 android:id="@+id/eventosNull"
                 android:visibility="gone"
                 android:layout_height="wrap_content"
-                android:text="No se encontraron Publicaciones Disponibles"
+                android:text="@string/notimeline"
                 android:textSize="14sp"
-                android:textColor="@color/pink"
+                android:textColor="@color/silver2"
                 android:layout_marginRight="10dp"
                 android:layout_marginLeft="10dp"
                 android:layout_centerHorizontal="true"

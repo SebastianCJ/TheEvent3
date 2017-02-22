@@ -86,9 +86,9 @@
                 android:id="@+id/comentariosNull"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                android:text="No se encontraron Actividades Disponibles"
+                android:text="@string/nocomentarios"
                 android:textSize="14sp"
-                android:textColor="@color/pink"
+                android:textColor="@color/silver2"
                 android:layout_marginRight="15dp"
                 android:layout_marginLeft="15dp"
                 android:layout_centerHorizontal="true"
@@ -96,6 +96,173 @@
                 android:layout_centerVertical="true"
                 android:layout_centerInParent="true"
                 android:layout_marginTop="15dp"/>
+        </RelativeLayout>
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="55dp"
+            android:layout_below="@+id/timelineTitulo">
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="200dp"
+                android:id="@+id/timelineHead">
+
+            </RelativeLayout>
+
+            <com.mikhaellopez.circularimageview.CircularImageView
+                android:layout_width="50dp"
+                android:layout_height="60dp"
+                android:id="@+id/imgperfil"
+                android:contentDescription="@string/imgevento"
+                app:civ_border="true"
+                app:civ_border_width="2dp"
+                app:civ_border_color="@color/white"
+                android:src="@mipmap/carb"
+                android:layout_marginLeft="15dp"
+                android:layout_marginBottom="-55dp"
+                android:layout_above="@id/desclayout" />
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/desclayout"
+                android:clipToPadding="false"
+                android:layout_below="@+id/timelineHead">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Juan Zepeda"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:id="@+id/nombrePer"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="80dp"
+                    android:layout_marginStart="80dp"
+                    android:layout_alignParentTop="true"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hace 24 dias"
+                    android:textSize="13sp"
+                    android:layout_marginTop="15dp"
+                    android:textColor="@color/silver"
+                    android:id="@+id/diatxt"
+                    android:layout_marginLeft="260dp"
+                    android:layout_marginRight="10dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="5dp"
+                    android:text="Que illos"
+                    android:textColor="@color/gray2"
+                    android:id="@+id/mensajeTime"
+                    android:textSize="12sp"
+                    android:layout_below="@+id/diatxt"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="182 Comentarios"
+                    android:textSize="10sp"
+                    android:textColor="@color/silver"
+                    android:id="@+id/numComentarios"
+                    android:layout_alignTop="@+id/txt"
+                    android:layout_toLeftOf="@+id/btncomentario"
+                    android:layout_toStartOf="@+id/btncomentario"
+                    android:layout_marginRight="12dp"
+                    android:layout_marginEnd="12dp" />
+
+                <ImageView
+                    android:id="@+id/btnmegusta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/btnmegusta"
+                    android:layout_marginLeft="20dp"
+                    android:layout_alignTop="@+id/txt" />
+                <ImageView
+                    android:id="@+id/btnmegustafill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/btnmegustafill"
+                    android:visibility="gone"
+                    android:layout_marginLeft="20dp"
+                    android:layout_alignTop="@+id/txt" />
+
+
+                <com.mikhaellopez.circularimageview.CircularImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/foto1"
+                    app:civ_border="false"
+                    android:src="@mipmap/carb"
+                    android:layout_alignTop="@+id/foto2"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginLeft="40dp" />
+
+                <com.mikhaellopez.circularimageview.CircularImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/foto2"
+                    app:civ_border="false"
+                    android:src="@mipmap/carb"
+                    android:layout_below="@+id/mensajeTime"
+                    android:layout_toRightOf="@+id/foto1"
+                    android:layout_toEndOf="@+id/foto1"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="3dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/burbuja"
+                    android:background="@drawable/stroke"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    android:text=" +20    "
+                    android:textSize="8sp"
+                    android:layout_below="@+id/mensajeTime"
+                    android:layout_toRightOf="@+id/foto2"
+                    android:layout_toEndOf="@+id/foto2"
+                    android:paddingRight="-3dp"
+                    android:layout_marginLeft="3dp" />
+                <ImageView
+                    android:id="@+id/btncomentario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/btncomentario"
+                    android:layout_alignTop="@+id/numComentarios"
+                    android:layout_alignRight="@+id/diatxt"
+                    android:layout_alignEnd="@+id/diatxt" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="les gusta esto"
+                    android:textSize="10sp"
+                    android:textColor="@color/silver"
+                    android:id="@+id/txt"
+                    android:layout_alignTop="@+id/burbuja"
+                    android:layout_toRightOf="@+id/burbuja"
+                    android:layout_toEndOf="@+id/burbuja"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginLeft="5dp" />
+
+
+            </RelativeLayout>
+
+
+
+
         </RelativeLayout>
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
@@ -183,34 +350,6 @@
             </LinearLayout>
 
         </LinearLayout>
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/postContainer"
-            android:layout_below="@+id/timelineTitulo"
-            android:layout_marginTop="55dp">
-
-            <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="200dp"
-                android:id="@+id/timelineHead">
-
-            </RelativeLayout>
-
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:id="@+id/vertblack"
-                android:visibility="gone"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_more_vert_black_48dp"
-                android:layout_marginTop="46dp"
-                android:layout_centerHorizontal="true"
-                android:contentDescription="@string/sd" />
-
-        </RelativeLayout>
 
         <ListView
             android:layout_marginTop="400dp"

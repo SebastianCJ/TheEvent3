@@ -28,6 +28,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,9 +54,9 @@ public class Timeline extends AppCompatActivity {
     private String id;
     JSONObject res;
     private int flag;
-    final String[] data ={"Mis Eventos","Mi Información","Notificaciones","Cerrar Sesión",};
+    final String[] data ={"Mis Eventos","Mi Información","Información del Evento","Notificaciones","Cerrar Sesión",};
     ListView eventContainer;
-    ArrayList<Bitmap> imagenes = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,25 +68,17 @@ public class Timeline extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.timelinemenu, data);
 
         final ImageView btnDrawerTimeline = (ImageView) findViewById(R.id.btnmenuOpen);
-        final Button timelineTitulo = (Button) findViewById(R.id.btnDrawerTimeline);
         final ImageView btnDrawerTimelineClose = (ImageView) findViewById(R.id.btnmenuClose);
         final CircularImageView fotoPerfil = (CircularImageView) findViewById(R.id.fotoEncabezado);
-        final ImageView btnBuscar = (ImageView) findViewById(R.id.buscarTimeline);
-        final EditText buscarTxt = (EditText) findViewById(R.id.buscarTxt);
-        final ImageView iconTimeline = (ImageView) findViewById(R.id.btntimeline);
         final ImageView iconCalendario = (ImageView) findViewById(R.id.btncalendario);
         final ImageView iconPublicacion = (ImageView) findViewById(R.id.btncentro);
         final ImageView iconRuta = (ImageView) findViewById(R.id.btnruta);
-        final ImageView btnmegusta = (ImageView) findViewById(R.id.btnmegusta);
-        final ImageView btncomentario = (ImageView) findViewById(R.id.btncomentario);
 
 
-        try {
-            Bitmap bitmap = BitmapFactory.decodeStream(this.openFileInput("myImage"));
-            fotoPerfil.setImageBitmap(bitmap);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
+        String remotePath = datosPersistentes.getString("fotoperfilThe3v3nt","");
+        Picasso.with(getApplicationContext()).load(remotePath).resize(50, 50).into(fotoPerfil);
+
         flag = 0;
         new AsyncEventos().execute("timeline");
 
@@ -108,6 +102,7 @@ public class Timeline extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(Timeline.this, Camara.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                         dialog.dismiss();
                     }
@@ -117,6 +112,7 @@ public class Timeline extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(Timeline.this, Galeria.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                         dialog.dismiss();
                     }
@@ -131,7 +127,9 @@ public class Timeline extends AppCompatActivity {
         iconCalendario.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(Timeline.this, Calendario.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+
 
             }
         });
@@ -139,7 +137,9 @@ public class Timeline extends AppCompatActivity {
         iconRuta.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(Timeline.this, Ubicaciones.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+
 
             }
         });
@@ -173,38 +173,6 @@ public class Timeline extends AppCompatActivity {
             }
         });
 
-        btnBuscar.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                timelineTitulo.setVisibility(View.INVISIBLE);
-                buscarTxt.setVisibility(View.VISIBLE);
-                buscarTxt.requestFocus();
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(buscarTxt, InputMethodManager.SHOW_IMPLICIT);
-
-
-            }
-        });
-        buscarTxt.setOnKeyListener(new EditText.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == EditorInfo.IME_ACTION_SEARCH ||
-                        keyCode == EditorInfo.IME_ACTION_DONE ||
-                        event.getAction() == KeyEvent.ACTION_DOWN &&
-                                event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-
-                    if (!event.isShiftPressed()) {
-                        timelineTitulo.setVisibility(View.VISIBLE);
-                        buscarTxt.setVisibility(View.INVISIBLE);
-                        buscarTxt.clearFocus();
-                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                        new AsyncEventos().execute("buscar",buscarTxt.getText().toString());
-                        return true;
-                    }
-
-                }
-                return false; // pass on to other listeners.
-            }
-        });
 
 
         final DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer_layout);
@@ -218,19 +186,29 @@ public class Timeline extends AppCompatActivity {
                 });
                 switch(pos){
                     case 1:
-                        Intent Intent = new Intent(getApplicationContext(), Evento.class);
+                        Intent Intent = new Intent(Timeline.this, Evento.class);
+                        Intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(Intent);
                         break;
                     case 2:
-                        Intent IntentInfo = new Intent(getApplicationContext(), MiInformacion.class);
+                        Intent IntentInfo = new Intent(Timeline.this, MiInformacion.class);
+                        IntentInfo.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(IntentInfo);
                         break;
+
                     case 3:
-                        Intent IntentNotificaciones = new Intent(getApplicationContext(), Notificaciones.class);
-                        startActivity(IntentNotificaciones);
+                        Intent IntentInfoEvento = new Intent(Timeline.this, InfoEvento.class);
+                        IntentInfoEvento.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(IntentInfoEvento);
                         break;
 
                     case 4:
+                        Intent IntentNotificaciones = new Intent(Timeline.this, Notificaciones.class);
+                        IntentNotificaciones.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(IntentNotificaciones);
+                        break;
+
+                    case 5:
                         final Dialog dialog = new Dialog(Timeline.this);
                         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                         dialog.setCancelable(false);
@@ -249,7 +227,8 @@ public class Timeline extends AppCompatActivity {
                         primerboton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Intent cerrarSesion = new Intent(getApplicationContext(), Login.class);
+                                Intent cerrarSesion = new Intent(Timeline.this, Login.class);
+                                cerrarSesion.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(cerrarSesion);
                             }
                         });
@@ -265,7 +244,7 @@ public class Timeline extends AppCompatActivity {
                         break;
 
                 }
-                //drawer.closeDrawer(navList);
+
 
             }
         });
@@ -281,10 +260,7 @@ public class Timeline extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 drawer.openDrawer(Gravity.LEFT);
-//                iconTimeline.setVisibility(View.GONE);
-//                iconCalendario.setVisibility(View.GONE);
-//                iconPublicacion.setVisibility(View.GONE);
-//                iconRuta.setVisibility(View.GONE);
+
                 btnDrawerTimeline.setVisibility(View.GONE);
                 btnDrawerTimelineClose.setVisibility(View.VISIBLE);
 
@@ -296,10 +272,7 @@ public class Timeline extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 drawer.closeDrawer(navList);
-//                iconTimeline.setVisibility(View.VISIBLE);
-//                iconCalendario.setVisibility(View.VISIBLE);
-//                iconPublicacion.setVisibility(View.VISIBLE);
-//                iconRuta.setVisibility(View.VISIBLE);
+
                 btnDrawerTimeline.setVisibility(View.VISIBLE);
                 btnDrawerTimelineClose.setVisibility(View.GONE);
                 System.out.println("CLOSE");
@@ -308,51 +281,6 @@ public class Timeline extends AppCompatActivity {
 
 
 
-    }
-
-
-    public static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) >= reqHeight
-                    && (halfWidth / inSampleSize) >= reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-
-        return inSampleSize;
-    }
-
-    public Bitmap getBitmapFromURL(String src) {
-        try {
-            java.net.URL url = new java.net.URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url
-                    .openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            InputStream input = connection.getInputStream();
-            options.inSampleSize = calculateInSampleSize(options, 50, 50);
-
-            // Decode bitmap with inSampleSize set
-            options.inJustDecodeBounds = false;
-            return BitmapFactory.decodeStream(input,null,options);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     private JSONObject obtenerPosts(String metodo,String busqueda) {
@@ -379,7 +307,7 @@ public class Timeline extends AppCompatActivity {
                 comentarios = new String[posts.length()];
                 likes = new String[posts.length()];
                 idposts = new String[posts.length()];
-                imagenes.clear();
+
                 imagenesString = new String[posts.length()];
 
                 int i = 0;
@@ -391,10 +319,8 @@ public class Timeline extends AppCompatActivity {
                     mensajes[i] = post.getString("post");
                     comentarios[i] = post.getString("numcomentarios");
                     likes[i] = post.getString("numlikes");
-                    imagenesString[i] = post.getString("imagen");
                     String remotePath = "http://theevent.com.mx/imagenes/timeline/" + post.getString("imagen");
-                    Bitmap myBitMap = getBitmapFromURL(remotePath);
-                    imagenes.add(myBitMap);
+                    imagenesString[i] = remotePath;
                     idposts[i] = post.getString("idpost");
                     i++;
                 }
@@ -471,7 +397,7 @@ public class Timeline extends AppCompatActivity {
             super.onPostExecute(result);
             pDialog.dismiss();
             if (nombres != null && nombres.length > 0) {
-                AdapterTimeline adapter = new AdapterTimeline(Timeline.this, nombres, dias, mensajes, imagenes, comentarios, likes, idposts, imagenesString);
+                AdapterTimeline adapter = new AdapterTimeline(Timeline.this, nombres, dias, mensajes, imagenesString, comentarios, likes, idposts);
                 eventContainer.setAdapter(adapter);
             }
             else{
@@ -482,14 +408,11 @@ public class Timeline extends AppCompatActivity {
             }
         }
     }
-
-
     @Override
-    public void onBackPressed(){
-        Intent Intent = new Intent(getApplicationContext(), Evento.class);
+    public void onBackPressed() {
+        Intent Intent = new Intent(Timeline.this, Evento.class);
+        Intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(Intent);
     }
-
-
 }
 

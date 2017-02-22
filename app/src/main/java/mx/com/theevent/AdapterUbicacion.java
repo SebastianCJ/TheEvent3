@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-public class AdapterUbicaciones extends ArrayAdapter<String> {
+public class AdapterUbicacion extends ArrayAdapter<String> {
     private final Activity context;
     private final String[] nombres;
     private final String[] descripciones;
@@ -43,15 +44,15 @@ public class AdapterUbicaciones extends ArrayAdapter<String> {
     private final String[] latitudes;
     private final String[] longitudes;
     private final String[] imagenes;
-    private final String[] idubicacion;
+    private final String[] urls;
     public SharedPreferences datosPersistentes;
 
     static class ViewHolder {
         public TextView nombreTxt;
         public TextView tituloCat;
-        public TextView rangoprecioTxt;
         public TextView descripcionTxt;
         public TextView direccionTxt;
+        public TextView urlTxt;
         public ImageView vertblack;
         public ImageView image;
         public Button comollegarTxt;
@@ -61,7 +62,7 @@ public class AdapterUbicaciones extends ArrayAdapter<String> {
 
     }
 
-    public AdapterUbicaciones(Activity context, String[] nombres, String[] descripciones, String[] rangoprecio, String[] direccion,String[] titulos, String[] imagenes, String[] latitudes, String[] longitudes,String[] idubicacion) {
+    public AdapterUbicacion(Activity context, String[] nombres, String[] descripciones, String[] rangoprecio, String[] direccion,String[] titulos, String[] imagenes, String[] latitudes, String[] longitudes,String[] urls) {
         super(context, R.layout.activity_ubicaciones, nombres);
         this.context = context;
         this.nombres = nombres;
@@ -72,7 +73,7 @@ public class AdapterUbicaciones extends ArrayAdapter<String> {
         this.imagenes = imagenes;
         this.latitudes = latitudes;
         this.longitudes = longitudes;
-        this.idubicacion = idubicacion;
+        this.urls = urls;
 
     }
 
@@ -104,7 +105,7 @@ public class AdapterUbicaciones extends ArrayAdapter<String> {
         // reuse views
         if (rowView == null) {
             LayoutInflater inflater = context.getLayoutInflater();
-            rowView = inflater.inflate(R.layout.ubicaciones_layout, null);
+            rowView = inflater.inflate(R.layout.ubicacion_layout, null);
 
             // configure view holder
             ViewHolder viewHolder = new ViewHolder();
@@ -117,6 +118,7 @@ public class AdapterUbicaciones extends ArrayAdapter<String> {
             viewHolder.comollegarTxt = (Button) rowView.findViewById(R.id.btncomollegar);
             viewHolder.uberbtn = (Button) rowView.findViewById(R.id.btnuber);
             viewHolder.vertblack = (ImageView) rowView.findViewById(R.id.vertblack);
+            viewHolder.urlTxt = (TextView) rowView.findViewById(R.id.urlTxt);
             viewHolder.layout = (RelativeLayout) rowView.findViewById(R.id.desclayoutComentario);
 
             rowView.setTag(viewHolder);
@@ -160,19 +162,6 @@ public class AdapterUbicaciones extends ArrayAdapter<String> {
             }
         });
 
-        holder.layout.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                datosPersistentes = getContext().getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editarDatosPersistentes = datosPersistentes.edit();
-                editarDatosPersistentes.putString("idubicacionTh33v3nt", idubicacion[posicion]);
-                editarDatosPersistentes.apply();
-                Intent intent = new Intent(getContext(), Ubicacion.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                getContext().startActivity(intent);
-            }
-        });
 
         String dia = descripciones[position];
         String nombre = nombres[position];
@@ -182,9 +171,14 @@ public class AdapterUbicaciones extends ArrayAdapter<String> {
             String imagen = imagenes[position];
             Picasso.with(context).load(imagen).into(holder.image);
         }
+        if(urls.length > 0 && urls[position]!= null) {
+            String url = urls[position];
+            holder.urlTxt.setText(url);
+            holder.urlTxt.setMovementMethod(LinkMovementMethod.getInstance());
+        }
         holder.nombreTxt.setText(nombre);
         holder.descripcionTxt.setText(dia);
-       // holder.rangoprecioTxt.setText(mes);
+        // holder.rangoprecioTxt.setText(mes);
         holder.direccionTxt.setText(hora);
 
         return rowView;

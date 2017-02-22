@@ -44,7 +44,7 @@
             android:layout_below="@id/nombrePerfilComentario"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="40dp"
-            android:textColor="@color/gray2" />
+            android:textColor="@color/grisa" />
 
         <TextView
             android:id="@+id/mesTxt"
@@ -57,7 +57,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginTop="10dp"
             android:text="Marzo"
-            android:textColor="@color/gray2" />
+            android:textColor="@color/grisa" />
 
         <TextView
             android:id="@+id/yearTxt"
@@ -70,7 +70,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginTop="10dp"
             android:textSize="14sp"
-            android:textColor="@color/gray2"/>
+            android:textColor="@color/grisa"/>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
             android:layout_height="wrap_content"
             android:lineSpacingExtra="5dp"
             android:text="2:00 pm"
-            android:textColor="@color/gray2"
+            android:textColor="@color/grisa"
             android:id="@+id/horaTxt"
             android:textSize="14sp"
             android:layout_below="@id/nombrePerfilComentario"
@@ -98,7 +98,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/ruta"
-            android:src="@mipmap/iconreloj"
+            android:src="@mipmap/icondestinos"
             android:layout_below="@+id/horaTxt"
             android:layout_alignLeft="@+id/imageView2"
             android:layout_alignStart="@+id/imageView2" />
@@ -106,22 +106,75 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Lugar del evento"
-            android:textColor="@color/gray2"
+            android:textColor="@color/grisa"
             android:id="@+id/lugarTxt"
             android:textSize="14sp"
             android:layout_alignTop="@+id/ruta"
             android:layout_alignLeft="@+id/diaTxt"
             android:layout_alignStart="@+id/diaTxt" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/imgseparador"
-            android:layout_below="@id/ruta"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="15dp"/>
+
     </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:baselineAligned="false"
+        android:id="@+id/btnlayout"
+        android:layout_below="@+id/desclayoutComentario">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnuber"
+                android:padding="10dp"
+                android:textSize="12sp"
+                android:textColor="@color/white"
+                android:text="@string/uber"
+                android:background="@color/gray2"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btncomollegar"
+                android:padding="10dp"
+                android:textSize="12sp"
+                android:textColor="@color/white"
+                android:text="@string/comollegar"
+                android:background="@color/gray2"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_centerHorizontal="true" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/imgseparador"
+        android:layout_below="@+id/btnlayout"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="12dp"/>
 
     <ImageView
         android:layout_width="wrap_content"

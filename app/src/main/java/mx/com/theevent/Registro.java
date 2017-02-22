@@ -83,6 +83,7 @@ public class Registro extends AppCompatActivity implements View.OnKeyListener{
         TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
         Fabric.with(this, new Twitter(authConfig));
 
+        Button btnregistro = (Button) findViewById(R.id.btniniciar);
         usuario = (EditText) this.findViewById(R.id.nombreR);
         contrasena = (EditText) this.findViewById(R.id.passwordTxtR);
         correoRegistro = (EditText) this.findViewById(R.id.emailTxtR);
@@ -92,6 +93,29 @@ public class Registro extends AppCompatActivity implements View.OnKeyListener{
         usuario.setTypeface(CustomFontsLoader.getTypeface(this,CustomFontsLoader.Light));
         contrasena.setTypeface(CustomFontsLoader.getTypeface(this,CustomFontsLoader.Light));
         correoRegistro.setTypeface(CustomFontsLoader.getTypeface(this,CustomFontsLoader.Light));
+
+
+        btnregistro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String enteredUsername = usuario.getText().toString();
+                String enteredPassword = contrasena.getText().toString();
+                String enteredCorreo = correoRegistro.getText().toString();
+
+                if (enteredUsername.equals("") || enteredPassword.equals("") || enteredCorreo.equals("") ) {
+                    Toast.makeText(Registro.this, "No pueden existir campos vacios", Toast.LENGTH_LONG).show();
+                }
+
+                if (enteredUsername.length() <= 1 || enteredPassword.length() <= 1 || enteredCorreo.length() <= 1) {
+                    Toast.makeText(Registro.this, "La longitud debe ser mayor a 1.", Toast.LENGTH_LONG).show();
+                }
+
+                if (enteredUsername.length() > 1 && enteredPassword.length() >  1 && enteredCorreo.length() > 1) {
+                    //autentificacion con el servidor remoto
+                    new AsyncRegistro().execute("login");
+                }
+            }
+        });
 
         LoginManager.getInstance().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {

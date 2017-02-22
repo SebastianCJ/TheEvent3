@@ -11,6 +11,10 @@
         <item name="android:windowBackground">@drawable/background_splash</item>
     </style>
 
+    <style parent="@android:style/Widget.Spinner" name="SpinnerAsEditTextMes">
+        <item name="android:background">@drawable/borderlines </item>
+    </style>
+
     <style name="MyAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorAccent">@color/green</item>
         <item name="android:textColorPrimary">@color/gray2</item>

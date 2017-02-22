@@ -5,7 +5,7 @@
 
     <view
         android:id="@+id/image"
-        class="com.example.gatsu.theevent.CropImageView"
+        class="mx.com.theevent.CropImageView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_x="0dip"

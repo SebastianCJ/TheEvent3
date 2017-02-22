@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,10 +19,10 @@ import java.net.URLEncoder;
  * Created by alfredotoquero on 20/05/16.
  */
 public class JSONData{
-
-    protected JSONObject conexionServidor(String myurl, String parametros) throws IOException {
+    protected JSONObject conexion (String myurl, String parametros) throws IOException  {
         InputStream is = null;
         int length = 2048*200;
+        int len = 2048*2000;
 
         try {
             URL url = new URL(myurl);
@@ -50,9 +51,10 @@ public class JSONData{
                 // Tamaño previamente conocido
                 conn.setFixedLengthStreamingMode(dataPost.getBytes().length);
 
+                len = dataPost.getBytes().length;
                 // Establecer application/x-www-form-urlencoded debido a la simplicidad de los datos
                 conn.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
-
+                conn.setRequestProperty("Accept-Encoding", "" );
                 OutputStream out = new BufferedOutputStream(conn.getOutputStream());
 
                 out.write(dataPost.getBytes());
@@ -61,11 +63,20 @@ public class JSONData{
             }
 
             conn.connect();
+
+            try{
+                int response = conn.getResponseCode();
+                System.out.println(response);
+            }
+            catch(EOFException e){
+                conexionServidor(myurl, parametros);
+            }
 //            int response = conn.getResponseCode();
+
             is = conn.getInputStream();
 
             // Convert the InputStream into a string
-            String contentAsString = convertInputStreamToString(is, length);
+            String contentAsString = convertInputStreamToString(is, len);
             System.out.println("CONTENTASTRING"+contentAsString);
             JSONObject respuestaJSON = null;
 
@@ -84,6 +95,18 @@ public class JSONData{
             }
         }
     }
+    protected JSONObject conexionServidor(String myurl, String parametros) throws IOException {
+        JSONObject respuesta = null;
+        try {
+            respuesta = conexion(myurl, parametros);
+            System.out.println(respuesta);
+        }
+        catch(EOFException e)
+        {
+            respuesta = conexion(myurl, parametros);
+        }
+        return respuesta;
+    }
 
 
 
@@ -91,8 +114,15 @@ public class JSONData{
         Reader reader = null;
         reader = new InputStreamReader(stream, "UTF-8");
         char[] buffer = new char[length];
-        reader.read(buffer);
-        return new String(buffer);
+        int nextCharacter;
+        String responseData = "";
+        while(true){ // Infinite loop, can only be stopped by a "break" statement
+            nextCharacter = reader.read(); // read() without parameters returns one character
+            if(nextCharacter == -1) // A return value of -1 means that we reached the end
+                break;
+            responseData += (char) nextCharacter; // The += operator appends the character to the end of the string
+        }
+        return responseData;
     }
 
 }

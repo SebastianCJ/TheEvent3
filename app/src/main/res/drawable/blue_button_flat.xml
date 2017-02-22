@@ -3,7 +3,7 @@
         android:radius="2dp" />
 
     <solid
-        android:color="#4688f1" />
+        android:color="@color/pink" />
 
     <!-- If you want to add some padding -->
     <padding

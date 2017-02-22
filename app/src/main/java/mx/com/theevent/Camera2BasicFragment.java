@@ -59,6 +59,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -487,7 +489,7 @@ public class Camera2BasicFragment extends Fragment
         String fileName = "myImage";//no .png or .jpg needed
         try {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 25, bytes);
             FileOutputStream fo = getActivity().openFileOutput(fileName, Context.MODE_PRIVATE);
             fo.write(bytes.toByteArray());
             // remember close file output
@@ -1049,12 +1051,14 @@ public class Camera2BasicFragment extends Fragment
                         public void run() {
 //                            File file = new File(path);
 //                            Uri uri = Uri.fromFile(file);
-                            upLoadServerUri = "http://distro.mx/TheEvent/imagenes/upload.php";
+                            upLoadServerUri = "http://theevent.com.mx/imagenes/upload.php";
                             decodeFile(mFile);
                             uploadFile(mFile.toString());
-                            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-                            Bitmap bitmap = BitmapFactory.decodeFile(mFile.getAbsolutePath(),bmOptions);
-                            createImageFromBitmap(bitmap);
+//                            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+//                            Bitmap bitmap = BitmapFactory.decodeFile(mFile.getAbsolutePath(),bmOptions);
+//                            createImageFromBitmap(bitmap);
+
+
                             new AsyncImagenPerfil().execute("guardar");
 
                         }
@@ -1098,6 +1102,50 @@ public class Camera2BasicFragment extends Fragment
         return null;
     }
 
+    public Bitmap getBitmapFromURL(String src) {
+        try {
+            java.net.URL url = new java.net.URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url
+                    .openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            InputStream input = connection.getInputStream();
+            options.inSampleSize = calculateInSampleSize(options, 50, 50);
+
+            // Decode bitmap with inSampleSize set
+            options.inJustDecodeBounds = false;
+            return BitmapFactory.decodeStream(input,null,options);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
     public JSONObject guardarImagenPerfil(){
         JSONData conexion = new JSONData();
         JSONObject respuesta = null;
@@ -1108,6 +1156,11 @@ public class Camera2BasicFragment extends Fragment
             System.out.println(respuesta.getString("success"));
             if (respuesta.getString("success").equals("OK")) {
                 System.out.println("SUCCESS IMGPERFIL");
+                SharedPreferences.Editor editarDatosPersistentes = datosPersistentes.edit();
+                String remotePath = "http://theevent.com.mx/imagenes/usuarios/" + respuesta.getString("imagen");
+                editarDatosPersistentes.putString("fotoperfilThe3v3nt",remotePath);
+                editarDatosPersistentes.apply();
+                Picasso.with(getActivity()).invalidate(remotePath);
             }
         } catch (IOException | JSONException e) {
             e.printStackTrace();
@@ -1124,8 +1177,7 @@ public class Camera2BasicFragment extends Fragment
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Intent intent = new Intent(getActivity(), Timeline.class);
-            startActivity(intent);
+
         }
 
         @Override
@@ -1140,10 +1192,13 @@ public class Camera2BasicFragment extends Fragment
                 switch (params[0]) {
                     case "guardar":
                         res = guardarImagenPerfil();
+//                        String[] separated = mFile.toString().split("/");
+//                        fileName = separated[separated.length-1];
+//                        System.out.println("FILENAME CAMERA2: " + fileName);
+////                        String remotePath = "http://theevent.com.mx/imagenes/usuarios/" + fileName;
+//////                        Bitmap myBitMap = getBitmapFromURL(remotePath);
+//////                        createImageFromBitmap(myBitMap);
                         return res.getString("success");
-                    case "eventimg":
-                        String remotePath = params[1];
-                        return "OK";
                 }
 
 
@@ -1276,42 +1331,6 @@ public class Camera2BasicFragment extends Fragment
         } // End else block
     }
 
-    /**
-     * Helper method to carry out crop operation
-     */
-    private void performCrop(Uri picUri){
-        //take care of exceptions
-        System.out.println("PERFROMCROP  !!!");
-        try {
-            //call the standard crop action intent (the user device may not support it)
-            Intent cropIntent = new Intent("com.android.camera.action.CROP");
-            //indicate image type and Uri
-            cropIntent.setDataAndType(picUri, "image/*");
-            //set crop properties
-            cropIntent.putExtra("crop", "true");
-            //indicate aspect of desired crop
-            cropIntent.putExtra("aspectX", 1);
-            cropIntent.putExtra("aspectY", 1);
-            //indicate output X and Y
-            cropIntent.putExtra("outputX", 256);
-            cropIntent.putExtra("outputY", 256);
-            //retrieve data on return
-            cropIntent.putExtra("return-data", true);
-            //start the activity - we handle returning in onActivityResult
-
-            cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, picUri);
-            cropIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-            startActivity(cropIntent);
-        }
-        //respond to users whose devices do not support the crop action
-        catch(ActivityNotFoundException anfe){
-            //display an error message
-            String errorMessage = "Whoops - your device doesn't support the crop action!";
-            System.out.println(errorMessage);
-            //Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
-            //toast.show();
-        }
-    }
     /**
      * Retrieves the JPEG orientation from the specified screen rotation.
      *

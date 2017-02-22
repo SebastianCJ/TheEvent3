@@ -16,6 +16,8 @@ import android.util.Log;
 import android.widget.FrameLayout;
 import android.hardware.Camera;
 
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -75,7 +77,7 @@ public class Camara extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         System.out.println("REQUEST: " + requestCode);
         System.out.println("RESULT: " + resultCode);
-        if (resultCode == 0){
+        if (resultCode == 0 || resultCode == -1){
             Intent Intent = new Intent(getApplicationContext(), Timeline.class);
             startActivity(Intent);
         }
@@ -113,7 +115,7 @@ public class Camara extends Activity {
         String fileName = "myImage";//no .png or .jpg needed
         try {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 25, bytes);
             FileOutputStream fo = openFileOutput(fileName, Context.MODE_PRIVATE);
             fo.write(bytes.toByteArray());
             // remember close file output
@@ -142,7 +144,7 @@ public class Camara extends Activity {
             BitmapFactory.decodeStream(new FileInputStream(f), null, o);
 
             // The new size we want to scale to
-            final int REQUIRED_SIZE=70;
+            final int REQUIRED_SIZE=40;
 
             // Find the correct scale value. It should be the power of 2.
             int scale = 1;
@@ -170,6 +172,11 @@ public class Camara extends Activity {
             System.out.println(respuesta.getString("success"));
             if (respuesta.getString("success").equals("OK")) {
                 System.out.println("SUCCESS IMGPERFIL");
+                SharedPreferences.Editor editarDatosPersistentes = datosPersistentes.edit();
+                String remotePath = "http://theevent.com.mx/imagenes/usuarios/" + respuesta.getString("imagen");
+                editarDatosPersistentes.putString("fotoperfilThe3v3nt",remotePath);
+                editarDatosPersistentes.apply();
+                Picasso.with(getApplicationContext()).invalidate(remotePath);
             }
         } catch (IOException | JSONException e) {
             e.printStackTrace();

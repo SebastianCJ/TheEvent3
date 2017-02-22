@@ -32,6 +32,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,11 +55,11 @@ public class Comentarios extends AppCompatActivity {
     private String[] imagenesString;
     private String id;
     JSONObject res;
-    final String[] data ={"Mis Eventos","Mi Información","Notificaciones","Cerrar Sesión",};
+    final String[] data ={"Mis Eventos","Mi Información","Información del Evento","Notificaciones","Cerrar Sesión",};
     ListView eventContainer;
+    RelativeLayout postHead;
     ArrayList<Bitmap> imagenes = new ArrayList<>();
     ArrayList<Bitmap> backgroundArray = new ArrayList<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,19 +80,16 @@ public class Comentarios extends AppCompatActivity {
         final ImageView btnmegusta = (ImageView) findViewById(R.id.btnmegusta);
         final ImageView btncomentario = (ImageView) findViewById(R.id.btncomentario);
 
-
-        try {
-            Bitmap bitmap = BitmapFactory.decodeStream(this.openFileInput("myImage"));
-            fotoPerfil.setImageBitmap(bitmap);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
+        String remotePath = datosPersistentes.getString("fotoperfilThe3v3nt","");
+        Picasso.with(getApplicationContext()).load(remotePath).resize(50, 50).into(fotoPerfil);
 
         obtenerPost();
 
         iconTimeline.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(Comentarios.this, Timeline.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
 
             }
@@ -99,19 +98,21 @@ public class Comentarios extends AppCompatActivity {
         iconCalendario.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(Comentarios.this, Calendario.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
 
             }
         });
-//
-//        iconRuta.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                Intent intent = new Intent(Timeline.this, Ruta.class);
-//                startActivity(intent);
-//
-//            }
-//        });
-//
+
+        iconRuta.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(Comentarios.this, Ubicaciones.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+
+            }
+        });
+
         iconPublicacion.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 final Dialog dialog = new Dialog(Comentarios.this);
@@ -144,6 +145,7 @@ public class Comentarios extends AppCompatActivity {
         fotoPerfil.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(Comentarios.this, Camara.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         });
@@ -160,10 +162,25 @@ public class Comentarios extends AppCompatActivity {
                 });
                 switch(pos){
                     case 1:
-                        Intent Intent = new Intent(getApplicationContext(), Evento.class);
+                        Intent Intent = new Intent(Comentarios.this, Evento.class);
                         startActivity(Intent);
                         break;
                     case 2:
+                        Intent IntentInfo = new Intent(Comentarios.this, MiInformacion.class);
+                        startActivity(IntentInfo);
+                        break;
+
+                    case 3:
+                        Intent IntentInfoEvento = new Intent(Comentarios.this, InfoEvento.class);
+                        startActivity(IntentInfoEvento);
+                        break;
+
+                    case 4:
+                        Intent IntentNotificaciones = new Intent(Comentarios.this, Notificaciones.class);
+                        startActivity(IntentNotificaciones);
+                        break;
+
+                    case 5:
                         final Dialog dialog = new Dialog(Comentarios.this);
                         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                         dialog.setCancelable(false);
@@ -182,11 +199,7 @@ public class Comentarios extends AppCompatActivity {
                         primerboton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                SharedPreferences.Editor editarDatosPersistentes = datosPersistentes.edit();
-                                editarDatosPersistentes.putString("usrThe3v3nt", "");
-                                editarDatosPersistentes.putString("passThe3v3nt", "");
-                                editarDatosPersistentes.apply();
-                                Intent cerrarSesion = new Intent(getApplicationContext(), Login.class);
+                                Intent cerrarSesion = new Intent(Comentarios.this, Login.class);
                                 startActivity(cerrarSesion);
                             }
                         });
@@ -199,6 +212,7 @@ public class Comentarios extends AppCompatActivity {
                         });
 
                         dialog.show();
+                        break;
 
                 }
                 //drawer.closeDrawer(navList);
@@ -234,50 +248,6 @@ public class Comentarios extends AppCompatActivity {
             }
         });
 
-    }
-
-    public static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) >= reqHeight
-                    && (halfWidth / inSampleSize) >= reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-
-        return inSampleSize;
-    }
-
-    public Bitmap getBitmapFromURL(String src) {
-        try {
-            java.net.URL url = new java.net.URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url
-                    .openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            InputStream input = connection.getInputStream();
-            options.inSampleSize = calculateInSampleSize(options, 50, 50);
-
-            // Decode bitmap with inSampleSize set
-            options.inJustDecodeBounds = false;
-            return BitmapFactory.decodeStream(input,null,options);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     private JSONObject obtenerComentarios() {
@@ -372,7 +342,7 @@ public class Comentarios extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            eventContainer = (ListView) findViewById(R.id.eventContainerTimeline);
+            postHead = (RelativeLayout) findViewById(R.id.timelineHead);
             pDialog = new ProgressDialog(Comentarios.this);
             // Set progressbar message
             pDialog.setMessage("Cargando Post...");
@@ -396,8 +366,27 @@ public class Comentarios extends AppCompatActivity {
                     case "background":
                         String background = datosPersistentes.getString("backgroundPost", "");
                         String remotePath = "http://theevent.com.mx/imagenes/timeline/" + background;
-                        Bitmap myBitMap = getBitmapFromURL(remotePath);
-                        backgroundArray.add(myBitMap);
+                        Picasso.with(getApplicationContext()).load(remotePath).into(new Target() {
+
+                            @Override
+                            public void onPrepareLoad(Drawable arg0) {
+                                // TODO Auto-generated method stub
+                                // Set progressbar message
+
+                            }
+
+                            @Override
+                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom arg1) {
+                                // TODO Auto-generated method stub
+                                eventContainer.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
+                            }
+
+                            @Override
+                            public void onBitmapFailed(Drawable arg0) {
+                                // TODO Auto-generated method stub
+
+                            }
+                        });
                         return "success";
                     case "eventimg":
 
@@ -429,9 +418,6 @@ public class Comentarios extends AppCompatActivity {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             pDialog.dismiss();
-            Drawable dr = new BitmapDrawable(backgroundArray.get(0));
-            RelativeLayout postHead = (RelativeLayout) findViewById(R.id.timelineHead);
-            postHead.setBackgroundDrawable(dr);
             new AsyncComentarios().execute("comentarios");
         }
     }
@@ -513,6 +499,7 @@ public class Comentarios extends AppCompatActivity {
     @Override
     public void onBackPressed(){
         Intent Intent = new Intent(getApplicationContext(), Timeline.class);
+        Intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(Intent);
     }
 }

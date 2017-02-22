@@ -48,20 +48,6 @@
                 android:textSize="22sp">
             </Button>
 
-            <EditText
-                android:id="@+id/buscarTxt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:hint="Buscar..."
-                android:textColor="@color/pink"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:visibility="gone"
-                android:layout_toRightOf="@+id/fotoEncabezado"
-                android:layout_toEndOf="@id/fotoEncabezado" />
-
             <com.mikhaellopez.circularimageview.CircularImageView
                 android:layout_width="40dp"
                 android:layout_height="60dp"
@@ -74,8 +60,18 @@
                 android:src="@drawable/carb"/>
 
             <ImageView
-                android:id="@+id/imgmsg"
+                android:layout_width="30dp"
                 android:visibility="gone"
+                android:layout_height="30dp"
+                android:id="@+id/btnBack"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:src="@mipmap/arrow"/>
+
+            <ImageView
+                android:id="@+id/imgmsg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@mipmap/imgmensaje"
@@ -89,9 +85,23 @@
                 android:id="@+id/ubicacionNull"
                 android:visibility="gone"
                 android:layout_height="wrap_content"
-                android:text="No se encontraron Ubicaciones Disponibles"
+                android:text="@string/noubicaciones"
                 android:textSize="14sp"
-                android:textColor="@color/pink"
+                android:textColor="@color/silver2"
+                android:layout_marginRight="15dp"
+                android:layout_marginLeft="15dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/imgmsg"
+                android:layout_centerVertical="true"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="15dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:id="@+id/ubicacionNullCat"
+                android:layout_height="wrap_content"
+                android:text="@string/txtCategoria"
+                android:textSize="14sp"
+                android:textColor="@color/silver2"
                 android:layout_marginRight="15dp"
                 android:layout_marginLeft="15dp"
                 android:layout_centerHorizontal="true"
@@ -201,14 +211,36 @@
                 android:layout_width="fill_parent"
                 android:layout_height="200dp"
                 android:id="@+id/timelineHead">
-
+                <Spinner
+                    android:layout_width="fill_parent"
+                    android:layout_height="40dp"
+                    android:id="@+id/spinner"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:spinnerMode="dropdown"
+                    style="@style/SpinnerAsEditTextMes"
+                    android:paddingRight="10dp"
+                    android:paddingLeft="10dp" />
+                <Spinner
+                    android:visibility="gone"
+                    android:layout_width="fill_parent"
+                    android:layout_height="40dp"
+                    android:id="@+id/spinnerSub"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:spinnerMode="dropdown"
+                    android:layout_marginTop="10dp"
+                    style="@style/SpinnerAsEditTextMes"
+                    android:paddingRight="10dp"
+                    android:layout_below="@id/spinner"
+                    android:paddingLeft="10dp" />
             </RelativeLayout>
 
 
         </RelativeLayout>
 
         <ListView
-            android:layout_marginTop="55dp"
+            android:layout_marginTop="100dp"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
             android:id="@+id/eventContainerUbicaciones"

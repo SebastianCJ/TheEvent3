@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -78,6 +79,7 @@ public class Galeria extends AppCompatActivity {
         System.out.println("RESULT: " + resultCode);
         if (resultCode == 0){
             Intent Intent = new Intent(getApplicationContext(), Timeline.class);
+            Intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(Intent);
         }
         switch (requestCode) {
@@ -103,10 +105,12 @@ public class Galeria extends AppCompatActivity {
                     Imagen = new File(new File(dir), CroperinoFileUtil.getmFileTemp().toString());
                     Log.d("IMAGEN: ",Imagen.toString());
                     String[] separated = Imagen.toString().split("/");
-                    fileName = separated[8];
+                    fileName = separated[separated.length - 1];
                     Log.d("FILENAME: ", fileName);
                     Log.d("Croperino : ",CroperinoFileUtil.getmFileTemp().toString());
                     scanMedia(Imagen.toString());
+
+
 
                     new Thread(new Runnable() {
                         public void run() {
@@ -115,12 +119,15 @@ public class Galeria extends AppCompatActivity {
                         }
                     }).start();
 
-                    super.onBackPressed();
+                    Intent Intent = new Intent(getApplicationContext(), Timeline.class);
+                    Intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(Intent);
                     //Do saving / uploading of photo method here.
                 }
                 break;
             default:
                 Intent Intent = new Intent(getApplicationContext(), Timeline.class);
+                Intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(Intent);
                 break;
         }
@@ -139,6 +146,11 @@ public class Galeria extends AppCompatActivity {
             System.out.println(respuesta.getString("success"));
             if (respuesta.getString("success").equals("OK")) {
                 System.out.println("SUCCESS IMGPERFIL");
+                SharedPreferences.Editor editarDatosPersistentes = datosPersistentes.edit();
+                String remotePath = "http://theevent.com.mx/imagenes/usuarios/" + respuesta.getString("imagen");
+                editarDatosPersistentes.putString("fotoperfilThe3v3nt",remotePath);
+                editarDatosPersistentes.apply();
+                Picasso.with(getApplicationContext()).invalidate(remotePath);
             }
         } catch (IOException | JSONException e) {
             e.printStackTrace();
@@ -212,6 +224,9 @@ public class Galeria extends AppCompatActivity {
         byte[] buffer;
         int maxBufferSize = 1 * 1024 * 1024;
         File sourceFile = new File(sourceFileUri);
+        datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
+        String id = datosPersistentes.getString("idusrThe3v3nt","");
+        String nombre = datosPersistentes.getString("nombreThe3v3nt","");
 
         if (!sourceFile.isFile()) {
             Log.e("uploadFile", "Source File not exist :"+
@@ -267,7 +282,7 @@ public class Galeria extends AppCompatActivity {
                 // send multipart form data necesssary after file data...
                 dos.writeBytes(lineEnd);
                 dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
-
+                dos.writeBytes(id+nombre);
                 // Responses from the server (code and message)
                 serverResponseCode = conn.getResponseCode();
                 String serverResponseMessage = conn.getResponseMessage();
@@ -355,6 +370,7 @@ public class Galeria extends AppCompatActivity {
     @Override
     public void onBackPressed(){
         Intent Intent = new Intent(getApplicationContext(), Timeline.class);
+        Intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(Intent);
     }
 }
