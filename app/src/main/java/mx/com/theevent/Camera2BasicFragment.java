@@ -1043,7 +1043,8 @@ public class Camera2BasicFragment extends Fragment
 //                            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
 //                            Bitmap bitmap = BitmapFactory.decodeFile(mFile.getAbsolutePath(),bmOptions);
 //                            createImageFromBitmap(bitmap);
-
+                            String foto = "http://theevent.com.mx/imagenes/usuarios/" + fileName;
+                            Picasso.with(getActivity().getApplicationContext()).invalidate(foto);
 
                             new AsyncImagenPerfil().execute("guardar");
 
@@ -1100,7 +1101,7 @@ public class Camera2BasicFragment extends Fragment
             if (respuesta.getString("success").equals("OK")) {
                 System.out.println("SUCCESS IMGPERFIL");
                 SharedPreferences.Editor editarDatosPersistentes = datosPersistentes.edit();
-                String remotePath = "http://theevent.com.mx/imagenes/usuarios/" + respuesta.getString("imagen");
+                String remotePath = "http://theevent.com.mx/imagenes/usuarios/" + fileName;
                 editarDatosPersistentes.putString("fotoperfilThe3v3nt",remotePath);
                 editarDatosPersistentes.apply();
                 Picasso.with(getActivity()).invalidate(remotePath);

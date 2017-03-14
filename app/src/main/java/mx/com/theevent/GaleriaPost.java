@@ -79,20 +79,29 @@ public class GaleriaPost extends AppCompatActivity {
             System.out.println("PREVIEW " + remotePath2);
         }
 
+        String txtPost = datosPersistentes.getString("txtPostThe3v3nt","");
+        if (!txtPost.equals("")) {
+            postTxt.setText(txtPost);
+        }
+
         btnPublicar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (flag == 1) {
-                    new Thread(new Runnable() {
-                        public void run() {
-                            if (remotePath2.equals("")) {
-                                decodeFile(CroperinoFileUtil.getmFileTemp());
-                                uploadFile(CroperinoFileUtil.getmFileTemp().toString());
+                    if (!postTxt.getText().toString().equals("")) {
+                        new Thread(new Runnable() {
+                            public void run() {
+                                if (remotePath2.equals("")) {
+                                    decodeFile(CroperinoFileUtil.getmFileTemp());
+                                    uploadFile(CroperinoFileUtil.getmFileTemp().toString());
+                                }
                             }
-
-                        }
-                    }).start();
-                    new AsyncPublicar().execute("guardar", postTxt.getText().toString());
+                        }).start();
+                        new AsyncPublicar().execute("guardar", postTxt.getText().toString());
+                    }
+                    else{
+                        Toast.makeText(GaleriaPost.this,"La publicacion no puede estar vacia",Toast.LENGTH_LONG).show();
+                    }
                 }
                 else{
                     Toast.makeText(GaleriaPost.this,"Hace falta agregar una imagen",Toast.LENGTH_LONG).show();
@@ -111,6 +120,11 @@ public class GaleriaPost extends AppCompatActivity {
                 Button primerboton = (Button) dialog.findViewById(R.id.btnPrimero);
                 Button segundoboton = (Button) dialog.findViewById(R.id.btnSegundo);
                 Button tercerboton = (Button) dialog.findViewById(R.id.btnTercero);
+
+                datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editarDatosPersistentes = datosPersistentes.edit();
+                editarDatosPersistentes.putString("txtPostThe3v3nt",postTxt.getText().toString());
+                editarDatosPersistentes.apply();
 
                 contenido.setText("Porfavor seleccione una opcion.");
                 segundoboton.setText("Galeria");
@@ -145,8 +159,14 @@ public class GaleriaPost extends AppCompatActivity {
         btnCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent Intent = new Intent(getApplicationContext(), GaleriaPost.class);
+                Intent Intent = new Intent(getApplicationContext(), Timeline.class);
                 Intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editarDatosPersistentes = datosPersistentes.edit();
+                editarDatosPersistentes.putString("fotoPostThe3v3nt","");
+                editarDatosPersistentes.putString("fotoPostPathThe3v3nt","");
+                editarDatosPersistentes.putString("txtPostThe3v3nt","");
+                editarDatosPersistentes.apply();
                 startActivity(Intent);
             }
         });
@@ -215,12 +235,19 @@ public class GaleriaPost extends AppCompatActivity {
         datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
         String fileNamePostCamera = datosPersistentes.getString("fotoPostThe3v3nt","");
         String remotePath2 = datosPersistentes.getString("fotoPostPathThe3v3nt","");
+        String txtPost = datosPersistentes.getString("txtPostThe3v3nt","");
         System.out.println("REMOTEPATH2: " + remotePath2);
         if (!remotePath2.equals("")) {
             flag = 1;
             Picasso.with(getApplicationContext()).load(new File(remotePath2)).fit().centerCrop().into(fotoPost2);
             System.out.println("PREVIEW " + remotePath2);
         }
+
+        final EditText postTxt = (EditText) findViewById(R.id.postTxt);
+        if (!txtPost.equals("")) {
+            postTxt.setText(txtPost);
+        }
+
         if (resultCode == 0){
             Intent Intent = new Intent(getApplicationContext(), GaleriaPost.class);
             Intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -357,6 +384,7 @@ public class GaleriaPost extends AppCompatActivity {
                 SharedPreferences.Editor editarDatosPersistentes = datosPersistentes.edit();
                 editarDatosPersistentes.putString("fotoPostThe3v3nt","");
                 editarDatosPersistentes.putString("fotoPostPathThe3v3nt","");
+                editarDatosPersistentes.putString("txtPostThe3v3nt","");
                 editarDatosPersistentes.apply();
                 Intent Intent = new Intent(getApplicationContext(), Timeline.class);
                 Intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -529,6 +557,12 @@ public class GaleriaPost extends AppCompatActivity {
     public void onBackPressed(){
         Intent Intent = new Intent(getApplicationContext(), Timeline.class);
         Intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+        datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editarDatosPersistentes = datosPersistentes.edit();
+        editarDatosPersistentes.putString("fotoPostThe3v3nt","");
+        editarDatosPersistentes.putString("fotoPostPathThe3v3nt","");
+        editarDatosPersistentes.putString("txtPostThe3v3nt","");
+        editarDatosPersistentes.apply();
         startActivity(Intent);
     }
 }

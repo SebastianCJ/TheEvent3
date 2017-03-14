@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -83,7 +84,7 @@ public class Notificaciones extends AppCompatActivity {
 
         datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
         String remotePath = datosPersistentes.getString("fotoperfilThe3v3nt","");
-        Picasso.with(getApplicationContext()).load(remotePath).resize(50, 50).into(fotoPerfil);
+        Picasso.with(getApplicationContext()).load(remotePath).resize(50, 50).networkPolicy(NetworkPolicy.NO_CACHE).into(fotoPerfil);
 
 
        // new AsyncUbicaciones().execute("ubicaciones");

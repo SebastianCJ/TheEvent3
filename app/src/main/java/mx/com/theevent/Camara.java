@@ -101,7 +101,8 @@ public class Camara extends Activity {
                     upLoadServerUri = "http://theevent.com.mx/imagenes/upload.php";
                     decodeFile(mFile);
                     uploadFile(mFile.toString());
-
+                    String foto = "http://theevent.com.mx/imagenes/usuarios/" + fileName;
+                    Picasso.with(getApplicationContext()).invalidate(foto);
                     new AsyncImagenPerfil().execute("guardar");
 
                 }
