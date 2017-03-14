@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/publicacionLayout">
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="@mipmap/imgnot"
+            android:id="@+id/timelineHead">
+        </ImageView>
+
+        <EditText
+            android:padding="10dp"
+            android:gravity="top"
+            android:id="@+id/comentarioTxt"
+            android:background="@drawable/rounded"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black21"
+            android:textColorHint="@color/black21"
+            android:hint="@string/escribirpublicacion"
+            android:layout_marginLeft="15dp"
+            android:imeOptions="actionDone"
+            android:singleLine="false"
+            android:scrollHorizontally="false"
+            android:lines="5"
+            android:inputType="textMultiLine"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_below="@+id/timelineHead"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/publicar"
+            android:id="@+id/btnPublicar"
+            android:layout_below="@+id/comentarioTxt"
+            android:layout_toRightOf="@+id/btnCancelar"
+            android:layout_toEndOf="@+id/btnCancelar" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancelar"
+            android:id="@+id/btnCancelar"
+            android:layout_below="@+id/comentarioTxt"
+            android:layout_toRightOf="@+id/btnPickImg"
+            android:layout_toEndOf="@+id/btnPickImg" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/escogerImagen"
+            android:id="@+id/btnPickImg"
+            android:layout_below="@+id/comentarioTxt"
+            android:layout_alignLeft="@+id/comentarioTxt"
+            android:layout_alignStart="@+id/comentarioTxt" />
+
+</RelativeLayout>
+

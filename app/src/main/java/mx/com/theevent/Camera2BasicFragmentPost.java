@@ -17,6 +17,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Camera;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -87,7 +88,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class Camera2BasicFragment extends Fragment
+public class Camera2BasicFragmentPost extends Fragment
         implements View.OnClickListener, FragmentCompat.OnRequestPermissionsResultCallback {
 
 
@@ -439,8 +440,8 @@ public class Camera2BasicFragment extends Fragment
         }
     }
 
-    public static Camera2BasicFragment newInstance() {
-        return new Camera2BasicFragment();
+    public static Camera2BasicFragmentPost newInstance() {
+        return new Camera2BasicFragmentPost();
     }
 
     @Override
@@ -459,8 +460,8 @@ public class Camera2BasicFragment extends Fragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        System.out.println("CAMERA2BASISCFRAGMENTPOST");
         Calendar c = Calendar.getInstance();
-        System.out.println("CAMERA2BASISCFRAGMENT");
         System.out.println("Current time => " + c.getTime());
         String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath();
         new CroperinoConfig("IMG_" + System.currentTimeMillis() + ".jpg", "/TheEvent/Pictures", dir);
@@ -475,13 +476,14 @@ public class Camera2BasicFragment extends Fragment
             }
             catch(Exception e) {
                 e.printStackTrace();
-                }
+            }
         }
         datosPersistentes = getActivity().getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
         String id = datosPersistentes.getString("idusrThe3v3nt","");
         String nombre = datosPersistentes.getString("nombreThe3v3nt","");
-        mFile = new File(path, id+nombre+"_pic.jpg");
-        fileName = id+nombre+"_pic.jpg";
+        long time= System.currentTimeMillis();
+        mFile = new File(path, id+nombre+time+"_pic.jpg");
+        fileName = id+nombre+time+"_pic.jpg";
 
 
     }
@@ -557,7 +559,7 @@ public class Camera2BasicFragment extends Fragment
                 // We don't use a front facing camera in this sample.
                 Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
                 if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
-                        continue;
+                    continue;
                 }
 
                 StreamConfigurationMap map = characteristics.get(
@@ -671,7 +673,7 @@ public class Camera2BasicFragment extends Fragment
                 // We don't use a front facing camera in this sample.
                 Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
                 if (facing != null && facing == CameraCharacteristics.LENS_FACING_BACK) {
-                        continue;
+                    continue;
                 }
 
                 StreamConfigurationMap map = characteristics.get(
@@ -1030,23 +1032,23 @@ public class Camera2BasicFragment extends Fragment
                     showToast("Fotografia Guardada en la Galeria");
                     Log.d(TAG, mFile.toString());
                     unlockFocus();
-                    Croperino.runCropImage(mFile, getActivity(), true, 1, 1, 0, 0);
-                    scanMedia(mFile.toString());
 
                     new Thread(new Runnable() {
                         public void run() {
-//                            File file = new File(path);
-//                            Uri uri = Uri.fromFile(file);
-                            upLoadServerUri = "http://theevent.com.mx/imagenes/upload.php";
+
+                            upLoadServerUri = "http://theevent.com.mx/imagenes/uploadPost.php";
                             decodeFile(mFile);
                             uploadFile(mFile.toString());
-//                            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-//                            Bitmap bitmap = BitmapFactory.decodeFile(mFile.getAbsolutePath(),bmOptions);
-//                            createImageFromBitmap(bitmap);
-
-
-                            new AsyncImagenPerfil().execute("guardar");
-
+                            String[] separated = mFile.toString().split("/");
+                            fileName = separated[separated.length - 1];
+                            System.out.println("FILENAME 2BFP: " + fileName);
+                            datosPersistentes = getActivity().getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editarDatosPersistentes = datosPersistentes.edit();
+                            editarDatosPersistentes.putString("fotoPostThe3v3nt",fileName);
+                            editarDatosPersistentes.putString("fotoPostPathThe3v3nt",mFile.toString());
+                            editarDatosPersistentes.apply();
+                            Intent Intent = new Intent(getActivity(), GaleriaPost.class);
+                            startActivity(Intent);
                         }
                     }).start();
 
@@ -1089,84 +1091,6 @@ public class Camera2BasicFragment extends Fragment
     }
 
 
-    public JSONObject guardarImagenPerfil(){
-        JSONData conexion = new JSONData();
-        JSONObject respuesta = null;
-        String id = datosPersistentes.getString("idusrThe3v3nt","");
-        try {
-            respuesta = conexion.conexionServidor(serverUrl, "action=imgPerfil&idusuario=" + id + "&img=" + fileName);
-            Log.d("url: ","action=imgPerfil&idusuario=" + id + "&img=" + fileName);
-            System.out.println(respuesta.getString("success"));
-            if (respuesta.getString("success").equals("OK")) {
-                System.out.println("SUCCESS IMGPERFIL");
-                SharedPreferences.Editor editarDatosPersistentes = datosPersistentes.edit();
-                String remotePath = "http://theevent.com.mx/imagenes/usuarios/" + respuesta.getString("imagen");
-                editarDatosPersistentes.putString("fotoperfilThe3v3nt",remotePath);
-                editarDatosPersistentes.apply();
-                Picasso.with(getActivity()).invalidate(remotePath);
-            }
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        }
-        return respuesta;
-    }
-
-    public class AsyncImagenPerfil extends AsyncTask<String, String, String> {
-
-        public AsyncImagenPerfil() {
-            //set context variables if required
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            //String urlString = params[0]; // URL to call
-
-            String resultToDisplay = "";
-
-            InputStream in = null;
-            try {
-                switch (params[0]) {
-                    case "guardar":
-                        res = guardarImagenPerfil();
-//                        String[] separated = mFile.toString().split("/");
-//                        fileName = separated[separated.length-1];
-//                        System.out.println("FILENAME CAMERA2: " + fileName);
-////                        String remotePath = "http://theevent.com.mx/imagenes/usuarios/" + fileName;
-//////                        Bitmap myBitMap = getBitmapFromURL(remotePath);
-//////                        createImageFromBitmap(myBitMap);
-                        return res.getString("success");
-                }
-
-
-            } catch (Exception e) {
-
-                System.out.println(e.getMessage());
-
-                return e.getMessage();
-
-            }
-
-            try {
-                return res.getString("success");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return "Error";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-
-        }
-    }
 
     public int uploadFile(String sourceFileUri) {
 
@@ -1211,9 +1135,9 @@ public class Camera2BasicFragment extends Fragment
 
                 dos.writeBytes(twoHyphens + boundary + lineEnd);
                 dos.writeBytes("Content-Disposition: form-data; name=uploaded_file;filename="
-                                + fileName + "" + lineEnd);
+                        + fileName + "" + lineEnd);
 
-                        dos.writeBytes(lineEnd);
+                dos.writeBytes(lineEnd);
 
                 // create a buffer of  maximum size
                 bytesAvailable = fileInputStream.available();

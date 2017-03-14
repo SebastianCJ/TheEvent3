@@ -25,8 +25,8 @@ android {
         applicationId "mx.com.theevent"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 16
-        versionName "1.2.4"
+        versionCode 18
+        versionName "1.2.6"
     }
     buildTypes {
         debug {

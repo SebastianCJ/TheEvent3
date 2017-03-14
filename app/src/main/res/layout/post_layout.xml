@@ -19,7 +19,6 @@
         app:civ_border="true"
         app:civ_border_width="2dp"
         app:civ_border_color="@color/white"
-        android:src="@mipmap/carb"
         android:layout_marginLeft="15dp"
         android:layout_marginBottom="-55dp"
         android:layout_above="@id/desclayout" />
@@ -102,7 +101,6 @@
             android:layout_height="20dp"
             android:id="@+id/foto1"
             app:civ_border="false"
-            android:src="@mipmap/carb"
             android:layout_alignTop="@+id/foto2"
             android:layout_marginStart="40dp"
             android:layout_marginLeft="40dp" />
@@ -112,7 +110,6 @@
             android:layout_height="20dp"
             android:id="@+id/foto2"
             app:civ_border="false"
-            android:src="@mipmap/carb"
             android:layout_below="@+id/mensajeTime"
             android:layout_toRightOf="@+id/foto1"
             android:layout_toEndOf="@+id/foto1"

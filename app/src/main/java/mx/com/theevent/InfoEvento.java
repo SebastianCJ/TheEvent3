@@ -141,29 +141,9 @@ public class InfoEvento extends AppCompatActivity {
 
         iconPublicacion.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                final Dialog dialog = new Dialog(InfoEvento.this);
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialog.setCancelable(false);
-                dialog.setContentView(R.layout.dialog_layout);
-
-                TextView contenido = (TextView) dialog.findViewById(R.id.txtContenidoAlert);
-                Button primerboton = (Button) dialog.findViewById(R.id.btnPrimero);
-                Button segundoboton = (Button) dialog.findViewById(R.id.btnSegundo);
-                Button tercerboton = (Button) dialog.findViewById(R.id.btnTercero);
-
-                contenido.setText("Las publicaciones estaran disponibles hasta el dia del evento.");
-                segundoboton.setText("OK");
-                primerboton.setVisibility(View.GONE);
-                tercerboton.setVisibility(View.GONE);
-
-                segundoboton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-
-                dialog.show();
+                Intent intent = new Intent(InfoEvento.this, GaleriaPost.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
 
             }
         });

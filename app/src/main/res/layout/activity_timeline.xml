@@ -53,8 +53,8 @@
                 app:civ_border_width="1dp"
                 app:civ_border_color="@color/gray"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:src="@drawable/carb"/>
+                android:layout_alignParentLeft="true" />
+
             <ImageView
                 android:id="@+id/imgmsg"
                 android:visibility="gone"

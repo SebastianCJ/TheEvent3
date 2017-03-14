@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white">
+
+
+
+    <android.support.v4.widget.DrawerLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/drawer_layout">
+        <RelativeLayout
+            android:id="@+id/timelineTitulo"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_alignParentTop="true"
+            android:padding="10dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fotoEncabezado"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:background="@mipmap/arrow"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:background="@mipmap/imgnot"
+                    android:id="@+id/timelineHead"
+                    android:layout_below="@id/fotoEncabezado">
+                </ImageView>
+
+                <EditText
+                    android:padding="10dp"
+                    android:gravity="top"
+                    android:id="@+id/postTxt"
+                    android:background="@drawable/rounded"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black21"
+                    android:textColorHint="@color/black21"
+                    android:hint="@string/escribirpublicacion"
+                    android:layout_marginLeft="15dp"
+                    android:imeOptions="actionDone"
+                    android:singleLine="false"
+                    android:scrollHorizontally="false"
+                    android:lines="5"
+                    android:inputType="textMultiLine"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_below="@+id/timelineHead"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/publicar"
+                    android:id="@+id/btnPublicar"
+                    android:layout_below="@+id/postTxt"
+                    android:layout_toRightOf="@+id/btnCancelar"
+                    android:layout_toEndOf="@+id/btnCancelar" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cancelar"
+                    android:id="@+id/btnCancelar"
+                    android:layout_below="@+id/postTxt"
+                    android:layout_toRightOf="@+id/btnPickImg"
+                    android:layout_toEndOf="@+id/btnPickImg" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/escogerImagen"
+                    android:id="@+id/btnPickImg"
+                    android:layout_below="@+id/postTxt"
+                    android:layout_alignLeft="@+id/postTxt"
+                    android:layout_alignStart="@+id/postTxt" />
+
+
+
+        </RelativeLayout>
+
+    </android.support.v4.widget.DrawerLayout>
+
+    <Button
+        android:id="@+id/btnDrawerTimeline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:text="@string/publicar"
+        android:textColor="@color/pink"
+        android:paddingBottom="10dp"
+        android:textSize="22sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true">
+
+    </Button>
+
+</RelativeLayout>

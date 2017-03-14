@@ -68,10 +68,11 @@ public class Ubicacion extends AppCompatActivity {
         final ImageView btnBack = (ImageView) findViewById(R.id.btnBack);
         final ImageView iconRuta = (ImageView) findViewById(R.id.btnruta);
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
-
+        Spinner spinner2 = (Spinner) findViewById(R.id.spinnerSub);
         fotoPerfil.setVisibility(View.GONE);
         btnBack.setVisibility(View.VISIBLE);
         spinner.setVisibility(View.GONE);
+        spinner2.setVisibility(View.GONE);
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -105,29 +106,9 @@ public class Ubicacion extends AppCompatActivity {
 
         iconPublicacion.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                final Dialog dialog = new Dialog(Ubicacion.this);
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialog.setCancelable(false);
-                dialog.setContentView(R.layout.dialog_layout);
-
-                TextView contenido = (TextView) dialog.findViewById(R.id.txtContenidoAlert);
-                Button primerboton = (Button) dialog.findViewById(R.id.btnPrimero);
-                Button segundoboton = (Button) dialog.findViewById(R.id.btnSegundo);
-                Button tercerboton = (Button) dialog.findViewById(R.id.btnTercero);
-
-                contenido.setText("Las publicaciones estaran disponibles hasta el dia del evento.");
-                segundoboton.setText("OK");
-                primerboton.setVisibility(View.GONE);
-                tercerboton.setVisibility(View.GONE);
-
-                segundoboton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-
-                dialog.show();
+                Intent intent = new Intent(Ubicacion.this, GaleriaPost.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
 
             }
         });
@@ -243,7 +224,6 @@ public class Ubicacion extends AppCompatActivity {
         });
 
 
-
     }
 
     private JSONObject obtenerUbicaciones(String idubicacion) {
@@ -285,8 +265,6 @@ public class Ubicacion extends AppCompatActivity {
                     urls[i] = ubicacion.getString("url");
                     String remotePath = "http://theevent.com.mx/imagenes/ubicaciones/" + idubicaciones[i] + ".jpg";
                     imgPaths[i] = remotePath;
-                    //Bitmap myBitMap = getBitmapFromURL(remotePath);
-                    //imagenes.add(myBitMap);
                     i++;
                 }
 
@@ -323,9 +301,6 @@ public class Ubicacion extends AppCompatActivity {
 
             //String urlString = params[0]; // URL to call
 
-            String resultToDisplay = "";
-
-            InputStream in = null;
             try {
                 switch (params[0]) {
                     case "ubicaciones":
@@ -355,7 +330,6 @@ public class Ubicacion extends AppCompatActivity {
             }
             return "Error";
         }
-
 
         @Override
         protected void onPostExecute(String result) {

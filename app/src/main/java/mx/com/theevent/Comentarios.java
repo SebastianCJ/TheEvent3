@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
@@ -53,10 +54,29 @@ public class Comentarios extends AppCompatActivity {
     private String[] comentarios;
     private String[] fechas;
     private String[] imagenesString;
+    public TextView namePost;
+    public TextView fecha;
+    public TextView numcomentarios;
+    public TextView mensaje;
+    public RelativeLayout image;
+    public TextView numlikes;
+    public ImageView vertblack;
+    public RelativeLayout post;
+    public ImageView btnmegusta;
+    public ImageView btnmegustafill;
+    public ImageView btncomentario;
+    public EditText comentTxt;
+    public Button commentBtn;
+    public CircularImageView foto1;
+    public CircularImageView foto2;
+    public TextView txt;
+    public CircularImageView img;
+    private Target target;
     private String id;
     JSONObject res;
     final String[] data ={"Mis Eventos","Mi Información","Información del Evento","Notificaciones","Cerrar Sesión",};
     ListView eventContainer;
+    RelativeLayout timelineHead;
     RelativeLayout postHead;
     ArrayList<Bitmap> imagenes = new ArrayList<>();
     ArrayList<Bitmap> backgroundArray = new ArrayList<>();
@@ -72,19 +92,28 @@ public class Comentarios extends AppCompatActivity {
 
         final ImageView btnDrawerTimeline = (ImageView) findViewById(R.id.btnmenuOpen);
         final ImageView btnDrawerTimelineClose = (ImageView) findViewById(R.id.btnmenuClose);
-        final CircularImageView fotoPerfil = (CircularImageView) findViewById(R.id.fotoEncabezado);
         final ImageView iconTimeline = (ImageView) findViewById(R.id.btntimeline);
         final ImageView iconCalendario = (ImageView) findViewById(R.id.btncalendario);
         final ImageView iconPublicacion = (ImageView) findViewById(R.id.btncentro);
         final ImageView iconRuta = (ImageView) findViewById(R.id.btnruta);
         final ImageView btnmegusta = (ImageView) findViewById(R.id.btnmegusta);
         final ImageView btncomentario = (ImageView) findViewById(R.id.btncomentario);
+        final ImageView btnBack = (ImageView) findViewById(R.id.btnBack);
+        comentTxt = (EditText) findViewById(R.id.comentarioTxt);
+        commentBtn = (Button) findViewById(R.id.btnComentarioSend);
 
-        datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
-        String remotePath = datosPersistentes.getString("fotoperfilThe3v3nt","");
-        Picasso.with(getApplicationContext()).load(remotePath).resize(50, 50).into(fotoPerfil);
 
-        obtenerPost();
+
+        new AsyncComentarios().execute("comentarios");
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(Comentarios.this, Timeline.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+
+            }
+        });
 
         iconTimeline.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -115,38 +144,10 @@ public class Comentarios extends AppCompatActivity {
 
         iconPublicacion.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                final Dialog dialog = new Dialog(Comentarios.this);
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialog.setCancelable(false);
-                dialog.setContentView(R.layout.dialog_layout);
-
-                TextView contenido = (TextView) dialog.findViewById(R.id.txtContenidoAlert);
-                Button primerboton = (Button) dialog.findViewById(R.id.btnPrimero);
-                Button segundoboton = (Button) dialog.findViewById(R.id.btnSegundo);
-                Button tercerboton = (Button) dialog.findViewById(R.id.btnTercero);
-
-                contenido.setText("Las publicaciones estaran disponibles hasta el dia del evento.");
-                segundoboton.setText("OK");
-                primerboton.setVisibility(View.GONE);
-                tercerboton.setVisibility(View.GONE);
-
-                segundoboton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-
-                dialog.show();
-
-            }
-        });
-
-        fotoPerfil.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(Comentarios.this, Camara.class);
+                Intent intent = new Intent(Comentarios.this, GaleriaPost.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+
             }
         });
 
@@ -248,6 +249,18 @@ public class Comentarios extends AppCompatActivity {
             }
         });
 
+        commentBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String comentario = comentTxt.getText().toString();
+                if (!comentario.isEmpty()){
+                    String idusr = datosPersistentes.getString("idusrThe3v3nt","");
+                    String idpost = datosPersistentes.getString("idpostThe3v3nt","");
+                    new AsyncComentar().execute("comentar",idusr,idpost,comentario);
+                }
+            }
+        });
+
     }
 
     private JSONObject obtenerComentarios() {
@@ -267,9 +280,7 @@ public class Comentarios extends AppCompatActivity {
                 nombres = new String[posts.length()];
                 fechas = new String[posts.length()];
                 comentarios = new String[posts.length()];
-                //imagenes.clear();
-                //imagenesString = new String[posts.length()];
-
+                imagenesString = new String[posts.length()];
                 int i = 0;
 
                 while (i < posts.length()) {
@@ -277,10 +288,7 @@ public class Comentarios extends AppCompatActivity {
                     comentarios[i] = post.getString("comentario");
                     nombres[i] = post.getString("nombre");
                     fechas[i] = post.getString("fecha");
-                    //imagenesString[i] = post.getString("imagen");
-                    //String remotePath = "http://theevent.com.mx/imagenes/timeline/" + post.getString("imagen");
-                    //Bitmap myBitMap = getBitmapFromURL(remotePath);
-                    //imagenes.add(myBitMap);
+                    imagenesString[i] = post.getString("imagen");
                     i++;
                 }
 
@@ -297,11 +305,15 @@ public class Comentarios extends AppCompatActivity {
         id = datosPersistentes.getString("idpostThe3v3nt","");
         Log.v("ESTE ES EL IDPOST",id);
 
+        final RelativeLayout timelineHead = (RelativeLayout) findViewById(R.id.timelineHead);
+
         TextView namePost = (TextView) findViewById(R.id.nombrePer);
         TextView fecha = (TextView) findViewById(R.id.diatxt);
         TextView mensaje = (TextView) findViewById(R.id.mensajeTime);
         TextView numcomentarios = (TextView) findViewById(R.id.numComentarios);
         TextView numlikes = (TextView) findViewById(R.id.burbuja);
+        ImageView fotolike1 = (ImageView) findViewById(R.id.foto1);
+        ImageView fotolike2 = (ImageView) findViewById(R.id.foto2);
 
         String nombrePost = datosPersistentes.getString("nombrePost", "");
         String mensajePost = datosPersistentes.getString("mensajePost", "");
@@ -311,7 +323,57 @@ public class Comentarios extends AppCompatActivity {
         String dia;
         String numComentarios = numcomentariosPost + " comentarios";
         String numLikes = "   +" + numlikesPost + "    ";
-        new AsyncImagenes().execute("background");
+        String background = datosPersistentes.getString("backgroundPost", "");
+        String remotePath = datosPersistentes.getString("fotoperfil","");
+        String liked = datosPersistentes.getString("likedPost","");
+        String foto1 = datosPersistentes.getString("fotolike1","");
+        String foto2 = datosPersistentes.getString("fotolike2","");
+
+        System.out.println("MEGUSTA SinComentarios " + liked);
+        if(liked.equals("liked")){
+            btnmegustafill.setVisibility(View.VISIBLE);
+            btnmegusta.setVisibility(View.GONE);
+        }
+        else{
+            btnmegustafill.setVisibility(View.GONE);
+            btnmegusta.setVisibility(View.VISIBLE);
+        }
+
+        if (!foto1.equals("")){
+            Picasso.with(getApplicationContext()).load(foto1).resize(50, 50).into(fotolike1);
+        }
+        if (!foto2.equals("")){
+            Picasso.with(getApplicationContext()).load(foto2).resize(50, 50).into(fotolike2);
+        }
+
+        Picasso.with(getApplicationContext()).load(remotePath).resize(50, 50).into(img);
+        Picasso.with(Comentarios.this).invalidate(remotePath);
+        target = new Target() {
+
+            @Override
+            public void onPrepareLoad(Drawable arg0) {
+                // TODO Auto-generated method stub
+                // Set progressbar message
+
+            }
+
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom arg1) {
+                // TODO Auto-generated method stub
+                timelineHead.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
+                System.out.println("IMG Loaded Comentarios");
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable arg0) {
+                // TODO Auto-generated method stub
+                timelineHead.setBackground( getResources().getDrawable(R.mipmap.imgnot));
+                System.out.println("IMG failed Comentarios");
+
+            }
+        };
+        timelineHead.setTag(target);
+        Picasso.with(getApplicationContext()).load(background).error(R.mipmap.imgnot).into((Target) timelineHead.getTag());
 
         switch (fechaPost) {
             case "0":
@@ -333,95 +395,6 @@ public class Comentarios extends AppCompatActivity {
 
     }
 
-    public class AsyncImagenes extends AsyncTask<String, String, String> {
-
-        public AsyncImagenes() {
-            //set context variables if required
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            postHead = (RelativeLayout) findViewById(R.id.timelineHead);
-            pDialog = new ProgressDialog(Comentarios.this);
-            // Set progressbar message
-            pDialog.setMessage("Cargando Post...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(false);
-            // Show progressbar
-            pDialog.show();
-        }
-
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            //String urlString = params[0]; // URL to call
-
-            String resultToDisplay = "";
-
-            InputStream in = null;
-            try {
-                switch (params[0]) {
-                    case "background":
-                        String background = datosPersistentes.getString("backgroundPost", "");
-                        String remotePath = "http://theevent.com.mx/imagenes/timeline/" + background;
-                        Picasso.with(getApplicationContext()).load(remotePath).into(new Target() {
-
-                            @Override
-                            public void onPrepareLoad(Drawable arg0) {
-                                // TODO Auto-generated method stub
-                                // Set progressbar message
-
-                            }
-
-                            @Override
-                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom arg1) {
-                                // TODO Auto-generated method stub
-                                eventContainer.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
-                            }
-
-                            @Override
-                            public void onBitmapFailed(Drawable arg0) {
-                                // TODO Auto-generated method stub
-
-                            }
-                        });
-                        return "success";
-                    case "eventimg":
-
-                        return "OK";
-                    case "buscar":
-                        //res = obtenerPosts();
-                        return res.getString("sucess");
-                }
-
-
-            } catch (Exception e) {
-
-                System.out.println(e.getMessage());
-
-                return e.getMessage();
-
-            }
-
-            try {
-                return res.getString("success");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return "Error";
-        }
-
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            pDialog.dismiss();
-            new AsyncComentarios().execute("comentarios");
-        }
-    }
-
     public class AsyncComentarios extends AsyncTask<String, String, String> {
 
         public AsyncComentarios() {
@@ -431,6 +404,19 @@ public class Comentarios extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            namePost = (TextView) findViewById(R.id.nombrePer);
+            fecha = (TextView) findViewById(R.id.diatxt);
+            mensaje = (TextView) findViewById(R.id.mensajeTime);
+            numcomentarios = (TextView) findViewById(R.id.numComentarios);
+            numlikes = (TextView) findViewById(R.id.burbuja);
+            btnmegusta = (ImageView) findViewById(R.id.btnmegusta);
+            btnmegustafill = (ImageView) findViewById(R.id.btnmegustafill);
+            btncomentario = (ImageView) findViewById(R.id.btncomentario);
+            foto1 = (CircularImageView) findViewById(R.id.foto1);
+            foto2 = (CircularImageView) findViewById(R.id.foto2);
+            img = (CircularImageView) findViewById(R.id.imgperfil);
+            txt = (TextView) findViewById(R.id.txt);
+
             eventContainer = (ListView) findViewById(R.id.eventContainerComentarios);
             pDialog = new ProgressDialog(Comentarios.this);
             // Set progressbar message
@@ -488,12 +474,106 @@ public class Comentarios extends AppCompatActivity {
             if (fechas!=null && fechas.length > 0) {
                 AdapterComentarios adapter = new AdapterComentarios(Comentarios.this, nombres, fechas, comentarios, imagenes, imagenesString);
                 eventContainer.setAdapter(adapter);
+                namePost.setVisibility(View.GONE);
+                fecha.setVisibility(View.GONE);
+                mensaje.setVisibility(View.GONE);
+                numcomentarios.setVisibility(View.GONE);
+                numlikes.setVisibility(View.GONE);
+                btnmegusta.setVisibility(View.GONE);
+                btnmegustafill.setVisibility(View.GONE);
+                btncomentario.setVisibility(View.GONE);
+                foto1.setVisibility(View.GONE);
+                foto2.setVisibility(View.GONE);
+                img.setVisibility(View.GONE);
+                txt.setVisibility(View.GONE);
+                comentTxt.setVisibility(View.GONE);
+                commentBtn.setVisibility(View.GONE);
             }
             else{
-                final TextView comentarioNull = (TextView) findViewById(R.id.comentariosNull);
-                comentarioNull.setVisibility(View.VISIBLE);
+                eventContainer.setVisibility(View.GONE);
+                comentTxt.setVisibility(View.VISIBLE);
+                commentBtn.setVisibility(View.VISIBLE);
+                obtenerPost();
             }
         }
+    }
+
+
+
+    public class AsyncComentar extends AsyncTask<String, String, String> {
+
+        public AsyncComentar() {
+            //set context variables if required
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            //String urlString = params[0]; // URL to call
+
+            String resultToDisplay = "";
+
+            InputStream in = null;
+            try {
+                switch (params[0]) {
+                    case "comentar":
+                        res = comentar(params[1],params[2],params[3]);
+                        return res.getString("success");
+                }
+
+
+            } catch (Exception e) {
+
+                System.out.println(e.getMessage());
+
+                return e.getMessage();
+
+            }
+
+            try {
+                return res.getString("success");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return "Error";
+        }
+
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            Intent intent = new Intent(Comentarios.this, Comentarios.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            //Toast.makeText(Comentarios.this, "", Toast.LENGTH_LONG).show();
+
+        }
+    }
+
+    private JSONObject comentar(String idusr,String idpost,String Comentario) {
+        Log.v("ESTE ES EL IDPOST",idpost);
+        Log.v("EST ES EL IDUSR",idusr);
+        JSONData conexion = new JSONData();
+        JSONObject respuesta = null;
+        try {
+            respuesta = conexion.conexionServidor(serverUrl, "action=comentar&idpost=" + idpost + "&idusr=" + idusr + "&comentario=" + Comentario);
+
+            if (respuesta.getString("success").equals("OK")) {
+
+                return respuesta;
+
+            }
+
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        return respuesta;
     }
 
     @Override

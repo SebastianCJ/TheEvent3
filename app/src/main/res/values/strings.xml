@@ -40,6 +40,12 @@
     <string name="infoevento">      INFORMACION</string>
     <string name="title_activity_asd">asd</string>
     <string name="sd">sd</string>
+    <string name="escribirpublicacion">¿Qué estás pensando?</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="escogerImagen">Imagen</string>
+    <string name="publicar">Publicar</string>
+    <string name="btnComentar">Comentar</string>
+    <string name="escribirComentario">Escribe un comentario...</string>
     <string name="txtCategoria">Para mostrar ubicaciones debe seleccionar primero una categoria</string>
     <string name="comollegar">¿Cómo llegar?</string>
     <string name="uber">Pedir un Uber</string>

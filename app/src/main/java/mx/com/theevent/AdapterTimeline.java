@@ -24,6 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -47,6 +48,11 @@ public class AdapterTimeline extends ArrayAdapter<String> {
     private final String[] likes;
     private final String[] idposts;
     private String[] imagenesString;
+    private String[] fotoperfil;
+    private String[] megusta;
+    private String[] fotoslikes1;
+    private String[] fotoslikes2;
+    private Target target;
     JSONObject res;
 
     static class ViewHolder {
@@ -128,13 +134,16 @@ public class AdapterTimeline extends ArrayAdapter<String> {
 
     private JSONObject megusta(String metodo,String id) {
         Log.v("ESTE ES EL IDPOST",id);
+        datosPersistentes = context.getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
+        String idusuario = datosPersistentes.getString("idusrThe3v3nt","");
+        Log.v("EL IDUSUARIO MEGUSTA",idusuario);
         JSONData conexion = new JSONData();
         JSONObject respuesta = null;
         try {
             if (metodo.equals("megusta")){
-                respuesta = conexion.conexionServidor(serverUrl, "action=megusta&idpost=" + id);
+                respuesta = conexion.conexionServidor(serverUrl, "action=megusta&idpost=" + id + "&idusr=" + idusuario);
             }else{
-                respuesta = conexion.conexionServidor(serverUrl, "action=yanomegusta&idpost=" + id);
+                respuesta = conexion.conexionServidor(serverUrl, "action=yanomegusta&idpost=" + id + "&idusr=" + idusuario);
             }
 
             if (respuesta.getString("success").equals("OK")) {
@@ -149,7 +158,7 @@ public class AdapterTimeline extends ArrayAdapter<String> {
         return respuesta;
     }
 
-    public AdapterTimeline(Activity context, String[] nombres, String[] dias, String[] mensajes, String[] imagenesString,String[] comentarios,String[] likes,String[] idposts) {
+    public AdapterTimeline(Activity context, String[] nombres, String[] dias, String[] mensajes, String[] imagenesString,String[] comentarios,String[] likes,String[] idposts,String[] fotoperfil,String[] megusta,String[] fotoslikes1,String[] fotoslikes2) {
         super(context, R.layout.activity_timeline, nombres);
         this.context = context;
         this.nombres = nombres;
@@ -159,6 +168,10 @@ public class AdapterTimeline extends ArrayAdapter<String> {
         this.comentarios = comentarios;
         this.likes = likes;
         this.idposts = idposts;
+        this.fotoperfil = fotoperfil;
+        this.megusta = megusta;
+        this.fotoslikes1 = fotoslikes1;
+        this.fotoslikes2 = fotoslikes2;
     }
 
     @Override
@@ -215,13 +228,25 @@ public class AdapterTimeline extends ArrayAdapter<String> {
                 editarDatosPersistentes.putString("numlikesPost", likes[posicion]);
                 editarDatosPersistentes.putString("numcomentariosPost", comentarios[posicion]);
                 editarDatosPersistentes.putString("fechaPost", dias[posicion]);
+                editarDatosPersistentes.putString("fotoperfil",fotoperfil[posicion]);
+                editarDatosPersistentes.putString("likedPost",megusta[posicion]);
+                editarDatosPersistentes.putString("fotolike1",fotoslikes1[posicion]);
+                editarDatosPersistentes.putString("fotolike2",fotoslikes2[posicion]);
                 editarDatosPersistentes.apply();
                 Intent intent = new Intent(context, Comentarios.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
         });
-
+        System.out.println("MEGUSTA RESULT " + megusta[position]);
+        if(megusta[position].equals("liked")){
+            holder.btnmegustafill.setVisibility(View.VISIBLE);
+            holder.btnmegusta.setVisibility(View.GONE);
+        }
+        else{
+            holder.btnmegustafill.setVisibility(View.GONE);
+            holder.btnmegusta.setVisibility(View.VISIBLE);
+        }
         holder.btnmegusta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -273,9 +298,19 @@ public class AdapterTimeline extends ArrayAdapter<String> {
         String mensaje = mensajes[position];
         String numComentarios = comentarios[position]+ " comentarios";
         String numLikes = "   +" + likes[position]+ "    ";
+        Picasso.with(context.getApplicationContext()).load(fotoperfil[position]).resize(50, 50).into(holder.imgperfil);
+        Picasso.with(context.getApplicationContext()).invalidate(fotoperfil[position]);
+
+        if (fotoslikes1.length > 0){
+            Picasso.with(context.getApplicationContext()).load(fotoslikes1[position]).resize(50, 50).into(holder.foto1);
+        }
+        if (fotoslikes2.length > 0){
+            Picasso.with(context.getApplicationContext()).load(fotoslikes2[position]).resize(50, 50).into(holder.foto2);
+        }
+
         if (imagenesString.length>0) {
 
-            Picasso.with(context).load(imagenesString[position]).into(new Target() {
+            target = new Target() {
 
                 @Override
                 public void onPrepareLoad(Drawable arg0) {
@@ -288,16 +323,23 @@ public class AdapterTimeline extends ArrayAdapter<String> {
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom arg1) {
                     // TODO Auto-generated method stub
                     holder.image.setBackgroundDrawable(new BitmapDrawable(context.getResources(), bitmap));
+                    System.out.println("IMG Loaded Timeline");
                 }
 
                 @Override
                 public void onBitmapFailed(Drawable arg0) {
                     // TODO Auto-generated method stub
+                    holder.image.setBackground( context.getResources().getDrawable(R.mipmap.imgnot));
+                    System.out.println("IMG failed Timeline");
 
                 }
-            });
+            };
+            Picasso.with(context).cancelRequest(target);
+            holder.image.setTag(target);
+            Picasso.with(context).load(imagenesString[position]).error(R.mipmap.imgnot).into((Target) holder.image.getTag());
 
         }
+
         holder.nombreTxt.setText(nombre);
         holder.diaTxt.setText(dia);
         holder.mensajeTxt.setText(mensaje);

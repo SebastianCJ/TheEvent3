@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class Ubicaciones extends AppCompatActivity {
@@ -79,7 +80,7 @@ public class Ubicaciones extends AppCompatActivity {
         final ImageView iconTimeline = (ImageView) findViewById(R.id.btntimeline);
         final ImageView iconCalendario = (ImageView) findViewById(R.id.btncalendario);
         final ImageView iconPublicacion = (ImageView) findViewById(R.id.btncentro);
-
+        dropdownSub = (Spinner)findViewById(R.id.spinnerSub);
 
 
         datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
@@ -87,7 +88,6 @@ public class Ubicaciones extends AppCompatActivity {
         Picasso.with(getApplicationContext()).load(remotePath).resize(50, 50).into(fotoPerfil);
 
         new AsyncCategorias().execute("categorias");
-
 
         fotoPerfil.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -152,29 +152,9 @@ public class Ubicaciones extends AppCompatActivity {
 
         iconPublicacion.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                final Dialog dialog = new Dialog(Ubicaciones.this);
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialog.setCancelable(false);
-                dialog.setContentView(R.layout.dialog_layout);
-
-                TextView contenido = (TextView) dialog.findViewById(R.id.txtContenidoAlert);
-                Button primerboton = (Button) dialog.findViewById(R.id.btnPrimero);
-                Button segundoboton = (Button) dialog.findViewById(R.id.btnSegundo);
-                Button tercerboton = (Button) dialog.findViewById(R.id.btnTercero);
-
-                contenido.setText("Las publicaciones estaran disponibles hasta el dia del evento.");
-                segundoboton.setText("OK");
-                primerboton.setVisibility(View.GONE);
-                tercerboton.setVisibility(View.GONE);
-
-                segundoboton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-
-                dialog.show();
+                Intent intent = new Intent(Ubicaciones.this, GaleriaPost.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
 
             }
         });
@@ -340,6 +320,10 @@ public class Ubicaciones extends AppCompatActivity {
                 }
 
             }
+            else{
+                subcategorias = new String[0];
+                idsubcategorias = new String[0];
+            }
             return respuesta;
         } catch (IOException | JSONException e) {
             e.printStackTrace();
@@ -395,6 +379,53 @@ public class Ubicaciones extends AppCompatActivity {
         return respuesta;
     }
 
+    private JSONObject obtenerUbicacionesSubcategorias(String idsubcategoria) {
+        datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
+        id = datosPersistentes.getString("idusrThe3v3nt","");
+        String idevento = datosPersistentes.getString("ideventoThe3v3nt", "");
+        Log.v("ESTE ES EL IDEVENTO",idevento);
+        JSONData conexion = new JSONData();
+        JSONObject respuesta = null;
+        try {
+            Log.d("UBICACIONES: ", "action=ubicacionesSubCategorias&idevento=" + idevento + "&idsubcategoria=" + idsubcategoria);
+            respuesta = conexion.conexionServidor(serverUrl, "action=ubicacionesSubCategorias&idevento=" + idevento + "&idsubcategoria=" + idsubcategoria);
+            if (respuesta.getString("success").equals("OK")) {
+
+                JSONArray ubicaciones = respuesta.getJSONArray("ubicaciones");
+                nombres = new String[ubicaciones.length()];
+                descripciones = new String[ubicaciones.length()];
+                rangoprecio = new String[ubicaciones.length()];
+                direccion = new String[ubicaciones.length()];
+                idubicaciones = new String[ubicaciones.length()];
+                titulos = new String[ubicaciones.length()];
+                latitudes = new String[ubicaciones.length()];
+                longitudes = new String[ubicaciones.length()];
+                imgPaths = new String[ubicaciones.length()];
+
+                int i = 0;
+
+                while (i < ubicaciones.length()) {
+                    JSONObject ubicacion = ubicaciones.getJSONObject(i);
+                    nombres[i] = ubicacion.getString("nombre");
+                    descripciones[i] = ubicacion.getString("descripcion");
+                    rangoprecio[i] = ubicacion.getString("rangoprecio");
+                    direccion[i] = ubicacion.getString("direccion");
+                    titulos[i] = ubicacion.getString("titulo");
+                    idubicaciones[i] = ubicacion.getString("idubicacion");
+                    latitudes[i] = ubicacion.getString("latitud");
+                    longitudes[i] = ubicacion.getString("longitud");
+                    String remotePath = "http://theevent.com.mx/imagenes/ubicaciones/" + idubicaciones[i] + ".jpg";
+                    imgPaths[i] = remotePath;
+                    i++;
+                }
+
+            }
+            return respuesta;
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        return respuesta;
+    }
 
     public class AsyncUbicaciones extends AsyncTask<String, String, String> {
 
@@ -420,7 +451,6 @@ public class Ubicaciones extends AppCompatActivity {
         protected String doInBackground(String... params) {
 
             //String urlString = params[0]; // URL to call
-
             String resultToDisplay = "";
 
             InputStream in = null;
@@ -429,8 +459,8 @@ public class Ubicaciones extends AppCompatActivity {
                     case "ubicaciones":
                         res = obtenerUbicaciones(params[1]);
                         return res.getString("success");
-                    case "subUbicaciones":
-                        res = obtenerUbicaciones(params[1]);
+                    case "subcategorias":
+                        res = obtenerUbicacionesSubcategorias(params[1]);
                         return res.getString("success");
                     case "buscar":
                         res = obtenerUbicaciones(params[1]);
@@ -483,13 +513,7 @@ public class Ubicaciones extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             eventContainer = (ListView) findViewById(R.id.eventContainerUbicaciones);
-            pDialog = new ProgressDialog(Ubicaciones.this);
-            // Set progressbar message
-            pDialog.setMessage("Cargando Ubicaciones...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(false);
-            // Show progressbar
-            pDialog.show();
+
         }
 
 
@@ -505,6 +529,9 @@ public class Ubicaciones extends AppCompatActivity {
                 switch (params[0]) {
                     case "categorias":
                         res = obtenerCategorias();
+                        return res.getString("success");
+                    case "subcategorias":
+                        res = obtenerSubCategorias(params[1]);
                         return res.getString("success");
                 }
 
@@ -529,7 +556,7 @@ public class Ubicaciones extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            pDialog.dismiss();
+
             dropdown = (Spinner)findViewById(R.id.spinner);
             dropdownSub = (Spinner)findViewById(R.id.spinnerSub);
             final TextView noCats = (TextView) findViewById(R.id.ubicacionNullCat);
@@ -548,8 +575,12 @@ public class Ubicaciones extends AppCompatActivity {
                         if (!idcategorias[position].equals("0")) {
                             noCats.setVisibility(View.GONE);
                             msg.setVisibility(View.GONE);
-                            obtenerSubCategorias(idcategorias[position]);
-                            new AsyncUbicaciones().execute("ubicaciones", idcategorias[position]);
+                            subcategorias = new String[0];
+                            idsubcategorias = new String[0];
+                            new AsyncSubCategorias().execute("subcategorias", idcategorias[position]);
+//                            if (!(subcategorias != null && subcategorias.length > 0)) {
+//                                new AsyncUbicaciones().execute("ubicaciones", idcategorias[position]);
+//                            }
                             SharedPreferences settings = getApplicationContext().getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
                             SharedPreferences.Editor editarDatosPersistentes = settings.edit();
                             editarDatosPersistentes.putString("selectedUbicationThe3v3nt", idcategorias[position]);
@@ -557,9 +588,12 @@ public class Ubicaciones extends AppCompatActivity {
                         }
                         else{
                             String selectedUbication = datosPersistentes.getString("selectedUbicationThe3v3nt","");
-                            if (!selectedUbication.equals("")) {
+                            String selectedSubUbication = datosPersistentes.getString("selectedSubUbicationThe3v3nt","");
+                            if (!selectedUbication.equals("") && !selectedSubUbication.equals("")) {
                                 int myNum = Integer.parseInt(selectedUbication);
                                 dropdown.setSelection(myNum);
+                                int myNumSub = Integer.parseInt(selectedSubUbication);
+                                dropdownSub.setSelection(myNumSub);
                             }
                         }
                     }
@@ -571,8 +605,62 @@ public class Ubicaciones extends AppCompatActivity {
 
                 });
 
-                if (subcategorias != null && subcategorias.length > 0) {
+            }
 
+        }
+    }
+
+    public class AsyncSubCategorias extends AsyncTask<String, String, String> {
+
+        public AsyncSubCategorias() {
+            //set context variables if required
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            eventContainer = (ListView) findViewById(R.id.eventContainerUbicaciones);
+        }
+
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            //String urlString = params[0]; // URL to call
+
+            String resultToDisplay = "";
+
+            InputStream in = null;
+            try {
+                switch (params[0]) {
+                    case "subcategorias":
+                        res = obtenerSubCategorias(params[1]);
+                        return res.getString("success");
+                }
+
+
+            } catch (Exception e) {
+
+                System.out.println(e.getMessage());
+
+                return e.getMessage();
+
+            }
+
+            try {
+                return res.getString("success");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return "Error";
+        }
+
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            int hidingItemIndex = 0;
+                if (subcategorias != null && subcategorias.length > 0) {
                     SpinnerAdapter dataAdapterSubCategorias = new SpinnerAdapter(getApplicationContext(), R.layout.spinner_item, subcategorias, hidingItemIndex);
                     dataAdapterSubCategorias.setDropDownViewResource(R.layout.spinner_item);
                     dropdownSub.setAdapter(dataAdapterSubCategorias);
@@ -584,19 +672,18 @@ public class Ubicaciones extends AppCompatActivity {
                             System.out.println(dropdownSub.getSelectedItem().toString());
                             System.out.println(idsubcategorias[position]);
                             if (!idsubcategorias[position].equals("0")) {
-                                new AsyncUbicaciones().execute("subUbicaciones", idsubcategorias[position]);
+                                new AsyncUbicaciones().execute("subcategorias", idsubcategorias[position]);
                                 SharedPreferences settings = getApplicationContext().getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editarDatosPersistentes = settings.edit();
                                 editarDatosPersistentes.putString("selectedSubUbicationThe3v3nt", idsubcategorias[position]);
                                 editarDatosPersistentes.apply();
                             }
-                            else{
-                                String selectedUbication = datosPersistentes.getString("selectedSubUbicationThe3v3nt","");
-                                if (!selectedUbication.equals("")) {
-                                    int myNum = Integer.parseInt(selectedUbication);
-                                    dropdownSub.setSelection(myNum);
-                                }
+
+                            if (position==0){
+                                String posicion = datosPersistentes.getString("selectedUbicationThe3v3nt","");
+                                new AsyncUbicaciones().execute("ubicaciones", posicion);
                             }
+
                         }
 
                         @Override
@@ -606,8 +693,6 @@ public class Ubicaciones extends AppCompatActivity {
 
                     });
                 }
-
-            }
         }
     }
 
@@ -618,6 +703,7 @@ public class Ubicaciones extends AppCompatActivity {
         SharedPreferences settings = getApplicationContext().getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
         SharedPreferences.Editor editarDatosPersistentes = settings.edit();
         editarDatosPersistentes.putString("selectedUbicationThe3v3nt", "");
+        editarDatosPersistentes.putString("selectedSubUbicationThe3v3nt", "");
         editarDatosPersistentes.apply();
         startActivity(Intent);
     }

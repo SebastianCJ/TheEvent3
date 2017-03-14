@@ -61,41 +61,16 @@
                 android:visibility="gone"
                 android:layout_toRightOf="@+id/fotoEncabezado"
                 android:layout_toEndOf="@id/fotoEncabezado" />
-            <com.mikhaellopez.circularimageview.CircularImageView
-                android:layout_width="40dp"
-                android:layout_height="60dp"
-                android:id="@+id/fotoEncabezado"
-                app:civ_border="true"
-                app:civ_border_width="1dp"
-                app:civ_border_color="@color/gray"
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:id="@+id/btnBack"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
-                android:src="@drawable/carb"/>
-            <ImageView
-                android:id="@+id/imgmsg"
-                android:visibility="gone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/imgmensaje"
-                android:layout_below="@id/fotoEncabezado"
-                android:layout_centerVertical="true"
-                android:layout_centerInParent="true"
-                android:layout_marginTop="100dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:id="@+id/comentariosNull"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:text="@string/nocomentarios"
-                android:textSize="14sp"
-                android:textColor="@color/silver2"
-                android:layout_marginRight="15dp"
-                android:layout_marginLeft="15dp"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@id/imgmsg"
-                android:layout_centerVertical="true"
-                android:layout_centerInParent="true"
-                android:layout_marginTop="15dp"/>
+                android:src="@mipmap/arrow"/>
+
         </RelativeLayout>
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -113,6 +88,31 @@
 
             </RelativeLayout>
 
+            <ImageView
+                android:id="@+id/imgmsg"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/imgmensaje"
+                android:layout_below="@id/desclayout"
+                android:layout_centerVertical="true"
+                android:layout_centerInParent="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:visibility="gone"
+                android:id="@+id/comentariosNull"
+                android:layout_height="wrap_content"
+                android:text="@string/nocomentarios"
+                android:textSize="14sp"
+                android:textColor="@color/silver2"
+                android:layout_marginRight="15dp"
+                android:layout_marginLeft="15dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/imgmsg"
+                android:layout_centerVertical="true"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="15dp"/>
             <com.mikhaellopez.circularimageview.CircularImageView
                 android:layout_width="50dp"
                 android:layout_height="60dp"
@@ -121,7 +121,6 @@
                 app:civ_border="true"
                 app:civ_border_width="2dp"
                 app:civ_border_color="@color/white"
-                android:src="@mipmap/carb"
                 android:layout_marginLeft="15dp"
                 android:layout_marginBottom="-55dp"
                 android:layout_above="@id/desclayout" />
@@ -204,7 +203,6 @@
                     android:layout_height="20dp"
                     android:id="@+id/foto1"
                     app:civ_border="false"
-                    android:src="@mipmap/carb"
                     android:layout_alignTop="@+id/foto2"
                     android:layout_marginStart="40dp"
                     android:layout_marginLeft="40dp" />
@@ -214,7 +212,6 @@
                     android:layout_height="20dp"
                     android:id="@+id/foto2"
                     app:civ_border="false"
-                    android:src="@mipmap/carb"
                     android:layout_below="@+id/mensajeTime"
                     android:layout_toRightOf="@+id/foto1"
                     android:layout_toEndOf="@+id/foto1"
@@ -257,9 +254,35 @@
                     android:layout_marginTop="3dp"
                     android:layout_marginLeft="5dp" />
 
+                <EditText
+                    android:id="@+id/comentarioTxt"
+                    android:background="@drawable/miinfoinput"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:textSize="12sp"
+                    android:ems="10"
+                    android:paddingRight="15dp"
+                    android:paddingLeft="15dp"
+                    android:textColor="@color/black21"
+                    android:textColorHint="@color/black21"
+                    android:hint="@string/escribirComentario"
+                    android:layout_marginLeft="15dp"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_below="@+id/burbuja"/>
 
+                <Button
+                    android:layout_width="wrap_content"
+                    android:visibility="gone"
+                    android:layout_height="wrap_content"
+                    android:text="@string/btnComentar"
+                    android:id="@+id/btnComentarioSend"
+                    android:layout_below="@+id/comentarioTxt"
+                    android:layout_alignRight="@+id/comentarioTxt"
+                    android:layout_alignEnd="@+id/comentarioTxt" />
             </RelativeLayout>
-
 
 
 
@@ -352,7 +375,7 @@
         </LinearLayout>
 
         <ListView
-            android:layout_marginTop="400dp"
+            android:layout_marginTop="60dp"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
             android:id="@+id/eventContainerComentarios"

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -51,6 +52,10 @@ public class Timeline extends AppCompatActivity {
     private String[] likes;
     private String[] idposts;
     private String[] imagenesString;
+    private String[] fotoperfil;
+    private String[] fotosLikes;
+    private String[] fotosLikes2;
+    private String[] megusta;
     private String id;
     JSONObject res;
     private int flag;
@@ -146,30 +151,9 @@ public class Timeline extends AppCompatActivity {
 
         iconPublicacion.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                final Dialog dialog = new Dialog(Timeline.this);
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialog.setCancelable(false);
-                dialog.setContentView(R.layout.dialog_layout);
-
-                TextView contenido = (TextView) dialog.findViewById(R.id.txtContenidoAlert);
-                Button primerboton = (Button) dialog.findViewById(R.id.btnPrimero);
-                Button segundoboton = (Button) dialog.findViewById(R.id.btnSegundo);
-                Button tercerboton = (Button) dialog.findViewById(R.id.btnTercero);
-
-                contenido.setText("Las publicaciones estaran disponibles hasta el dia del evento.");
-                segundoboton.setText("OK");
-                primerboton.setVisibility(View.GONE);
-                tercerboton.setVisibility(View.GONE);
-
-                segundoboton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-
-                dialog.show();
-
+                Intent intent = new Intent(Timeline.this, GaleriaPost.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
         });
 
@@ -307,9 +291,11 @@ public class Timeline extends AppCompatActivity {
                 comentarios = new String[posts.length()];
                 likes = new String[posts.length()];
                 idposts = new String[posts.length()];
-
+                fotoperfil = new String[posts.length()];
                 imagenesString = new String[posts.length()];
-
+                fotosLikes = new String[posts.length()];
+                fotosLikes2 = new String[posts.length()];
+                megusta = new String[posts.length()];
                 int i = 0;
 
                 while (i < posts.length()) {
@@ -320,8 +306,14 @@ public class Timeline extends AppCompatActivity {
                     comentarios[i] = post.getString("numcomentarios");
                     likes[i] = post.getString("numlikes");
                     String remotePath = "http://theevent.com.mx/imagenes/timeline/" + post.getString("imagen");
+                    String remotePathFoto = "http://theevent.com.mx/imagenes/usuarios/" + post.getString("foto");
                     imagenesString[i] = remotePath;
+                    fotoperfil[i] = remotePathFoto;
                     idposts[i] = post.getString("idpost");
+                    megusta [i] = post.getString("like");
+
+                    fotosLikes[i] = "http://theevent.com.mx/imagenes/usuarios/" + post.getString("fotolike1");
+                    fotosLikes2[i] = "http://theevent.com.mx/imagenes/usuarios/" + post.getString("fotolike2");
                     i++;
                 }
 
@@ -358,9 +350,6 @@ public class Timeline extends AppCompatActivity {
 
             //String urlString = params[0]; // URL to call
 
-            String resultToDisplay = "";
-
-            InputStream in = null;
             try {
                 switch (params[0]) {
                     case "timeline":
@@ -397,7 +386,7 @@ public class Timeline extends AppCompatActivity {
             super.onPostExecute(result);
             pDialog.dismiss();
             if (nombres != null && nombres.length > 0) {
-                AdapterTimeline adapter = new AdapterTimeline(Timeline.this, nombres, dias, mensajes, imagenesString, comentarios, likes, idposts);
+                AdapterTimeline adapter = new AdapterTimeline(Timeline.this, nombres, dias, mensajes, imagenesString, comentarios, likes, idposts,fotoperfil,megusta,fotosLikes,fotosLikes2);
                 eventContainer.setAdapter(adapter);
             }
             else{

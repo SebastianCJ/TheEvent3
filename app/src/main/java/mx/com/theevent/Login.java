@@ -70,6 +70,7 @@ public class Login extends AppCompatActivity  {
     private String username;
     private Long userID;
     private String UserName;
+    private String token;
     JSONObject res;
 
     @Override
@@ -90,7 +91,7 @@ public class Login extends AppCompatActivity  {
             @Override
             public void onClick(View v) {
                 Intent Intent = new Intent(getApplicationContext(), Registro.class);
-                Intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                Intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(Intent);
             }
         });
@@ -179,11 +180,7 @@ public class Login extends AppCompatActivity  {
         String msg = getString(R.string.msg_subscribed);
         Log.d("TEMA: ", msg);
 
-        String token = FirebaseInstanceId.getInstance().getToken();
 
-        // Log and toast
-        String msg2 = getString(R.string.msg_token_fmt, token);
-        Log.d("TOKEN: ", msg2);
 
 
         LoginManager.getInstance().registerCallback(callbackManager,
@@ -329,8 +326,16 @@ public class Login extends AppCompatActivity  {
                 editarDatosPersistentes.putString("amaternoThe3v3nt",respuesta.getString("amaterno"));
                 editarDatosPersistentes.putString("telefonoThe3v3nt", respuesta.getString("telefono"));
                 editarDatosPersistentes.putString("correoThe3v3nt",respuesta.getString("correo"));
+                editarDatosPersistentes.putString("tokenThe3v3nt",respuesta.getString("token"));
                 editarDatosPersistentes.putString("fotoperfilThe3v3nt",remotePath);
                 editarDatosPersistentes.apply();
+
+                token = FirebaseInstanceId.getInstance().getToken();
+                Log.d("TOKEN: ", token);
+
+                datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
+                String idusuario = datosPersistentes.getString("idusrThe3v3nt", "");
+                guardarToken(token,idusuario);
 
             }
         } catch (IOException | JSONException e) {
@@ -365,8 +370,16 @@ public class Login extends AppCompatActivity  {
                 editarDatosPersistentes.putString("amaternoThe3v3nt",respuesta.getString("amaterno"));
                 editarDatosPersistentes.putString("telefonoThe3v3nt", respuesta.getString("telefono"));
                 editarDatosPersistentes.putString("correoThe3v3nt",respuesta.getString("correo"));
+                editarDatosPersistentes.putString("tokenThe3v3nt",respuesta.getString("token"));
                 editarDatosPersistentes.putString("fotoperfilThe3v3nt",remotePath);
                 editarDatosPersistentes.apply();
+
+                token = FirebaseInstanceId.getInstance().getToken();
+                Log.d("TOKEN: ", token);
+
+                datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
+                String idusuario = datosPersistentes.getString("idusrThe3v3nt", "");
+                guardarToken(token,idusuario);
 
             }
         } catch (IOException | JSONException e) {
@@ -391,8 +404,7 @@ public class Login extends AppCompatActivity  {
                 else{
                     remotePath = "http://theevent.com.mx/imagenes/usuarios/" + respuesta.getString("imagen");
                 }
-               // Bitmap myBitMap = getBitmapFromURL(remotePath);
-                //createImageFromBitmap(myBitMap);
+
                 SharedPreferences.Editor editarDatosPersistentes = datosPersistentes.edit();
                 editarDatosPersistentes.putString("usrThe3v3nt", UserName);
                 editarDatosPersistentes.putString("idusrThe3v3nt", respuesta.getString("id"));
@@ -401,8 +413,17 @@ public class Login extends AppCompatActivity  {
                 editarDatosPersistentes.putString("amaternoThe3v3nt",respuesta.getString("amaterno"));
                 editarDatosPersistentes.putString("telefonoThe3v3nt", respuesta.getString("telefono"));
                 editarDatosPersistentes.putString("correoThe3v3nt",respuesta.getString("correo"));
+                editarDatosPersistentes.putString("tokenThe3v3nt",respuesta.getString("token"));
                 editarDatosPersistentes.putString("fotoperfilThe3v3nt",remotePath);
                 editarDatosPersistentes.apply();
+
+                token = FirebaseInstanceId.getInstance().getToken();
+                Log.d("TOKEN: ", token);
+
+                datosPersistentes = getSharedPreferences("The3v3nt", Context.MODE_PRIVATE);
+                String idusuario = datosPersistentes.getString("idusrThe3v3nt", "");
+                guardarToken(token,idusuario);
+
             }
         } catch (IOException | JSONException e) {
             e.printStackTrace();
@@ -410,76 +431,67 @@ public class Login extends AppCompatActivity  {
         return respuesta;
     }
 
-    public String createImageFromBitmap(Bitmap bitmap) {
-        String fileName = "myImage";//no .png or .jpg needed
+    private JSONObject guardarToken(String token,String idusuario){
+        JSONData conexion = new JSONData();
+        JSONObject respuesta = null;
+
         try {
-            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-            FileOutputStream fo = openFileOutput(fileName, Context.MODE_PRIVATE);
-            fo.write(bytes.toByteArray());
-            // remember close file output
-            fo.close();
-        } catch (Exception e) {
+            respuesta = conexion.conexionServidor(serverUrl, "action=guardarToken&idusuario=" + idusuario + "&token=" + token);
+            Log.d("url: ","action=guardarToken&idusuario=" + idusuario + "&token=" + token);
+            if (respuesta.getString("success").equals("OK")) {
+                System.out.println("Token Guardado");
+            }
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
-            fileName = null;
         }
-        return fileName;
+        return respuesta;
     }
 
     public class AsyncLogin extends AsyncTask<String, String, String> {
 
-            public AsyncLogin() {
-                //set context variables if required
-            }
+        public AsyncLogin() {
+            //set context variables if required
+        }
 
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
 
 
-            @Override
-            protected String doInBackground(String... params) {
+        @Override
+        protected String doInBackground(String... params) {
 
-                //String urlString = params[0]; // URL to call
+            //String urlString = params[0]; // URL to call
 
-                String resultToDisplay = "";
-
-                InputStream in = null;
-                try {
-                    switch (params[0]) {
-                        case "login":
-                            res = conectar();
-                            return res.getString("success");
-                        case "fb":
-                            res = conectarFB();
-                            return res.getString("success");
-                        case "twit":
-                            res = conectarTwit();
-                            return res.getString("success");
-                    }
-
-                } catch (Exception e) {
-
-                    System.out.println(e.getMessage());
-
-                    return e.getMessage();
-
+            try {
+                switch (params[0]) {
+                    case "login":
+                        res = conectar();
+                        return res.getString("success");
+                    case "fb":
+                        res = conectarFB();
+                        return res.getString("success");
+                    case "twit":
+                        res = conectarTwit();
+                        return res.getString("success");
                 }
 
-//            try {
-//                resultToDisplay = IOUtils.toString(in, "UTF-8");
-//                //to [convert][1] byte stream to a string
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-                try {
-                    return res.getString("success");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                return "Error";
+            } catch (Exception e) {
+
+                System.out.println(e.getMessage());
+
+                return e.getMessage();
+
             }
+
+            try {
+                return res.getString("success");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return "Error";
+        }
 
 
         @Override
@@ -496,49 +508,6 @@ public class Login extends AppCompatActivity  {
         }
     }
 
-    public static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) >= reqHeight
-                    && (halfWidth / inSampleSize) >= reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-
-        return inSampleSize;
-    }
-
-    public Bitmap getBitmapFromURL(String src) {
-        try {
-            java.net.URL url = new java.net.URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url
-                    .openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            InputStream input = connection.getInputStream();
-            options.inSampleSize = calculateInSampleSize(options, 50, 50);
-
-            // Decode bitmap with inSampleSize set
-            options.inJustDecodeBounds = false;
-            return BitmapFactory.decodeStream(input,null,options);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
